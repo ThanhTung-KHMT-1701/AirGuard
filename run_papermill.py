@@ -4,7 +4,7 @@ import papermill as pm
 # Run notebooks end-to-end (semi-supervised + supervised + regression + ARIMA)
 os.makedirs("notebooks/runs", exist_ok=True)
 
-KERNEL = "beijing_env"
+KERNEL = "KhaiPhaDuLieu"
 
 # 1) Preprocessing + EDA
 pm.execute_notebook(
