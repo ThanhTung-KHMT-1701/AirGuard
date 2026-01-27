@@ -119,7 +119,7 @@ def build_preprocess(X: pd.DataFrame) -> Tuple[ColumnTransformer, List[str], Lis
     )
     return pre, num_cols, cat_cols
 
-
+# FilePath: src\semi_supervised_library.py
 def make_base_classifier(random_state: int = 42) -> HistGradientBoostingClassifier:
     return HistGradientBoostingClassifier(
         max_depth=6,
