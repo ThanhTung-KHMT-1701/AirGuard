@@ -214,7 +214,7 @@ def run_prepare_regression_dataset(
 ) -> Path:
     """
     End-to-end: load -> clean -> time features -> lag features -> future target -> save parquet.
-    Output: data/processed/dataset_for_regression.parquet
+    Output: data/processed/07_dataset_for_regression.parquet
     """
     _ensure_dirs(paths.data_raw, paths.data_processed)
 
@@ -229,7 +229,7 @@ def run_prepare_regression_dataset(
     df = make_regression_target(df, target_col=target_col, horizon=horizon, out_col="y")
 
     if file_name is None:
-        file_name = "dataset_for_regression.parquet"
+        file_name = "07_dataset_for_regression.parquet"
     out = paths.data_processed / file_name
     df.to_parquet(out, index=False)
     return out

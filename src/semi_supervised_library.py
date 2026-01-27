@@ -279,6 +279,9 @@ class SelfTrainingAQIClassifier:
                 "tau": float(self.st_cfg.tau),
             })
 
+            # FilePath: src\semi_supervised_library.py
+            # Đây là phần kiểm soát số lượng "bản ghi mới có nhãn giả" được thêm vào
+            # của hàm quá trình "Self-Training"
             if n_new < int(self.st_cfg.min_new_per_iter):
                 break
 

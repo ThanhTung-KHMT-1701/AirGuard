@@ -125,4 +125,4 @@ datetime,station,y_true,y_pred
 
 - **Trước đó:** [04_semi_self_training.md](./04_semi_self_training.md)
 - **Baseline để so sánh:** `06_classification_modelling.ipynb`
-- **Tổng hợp kết quả:** `09_semi_supervised_report.ipynb`
+- **Tổng hợp kết quả:** [09_semi_supervised_report.md](./09_semi_supervised_report.md)
