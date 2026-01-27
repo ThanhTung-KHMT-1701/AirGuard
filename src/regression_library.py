@@ -210,7 +210,7 @@ def run_prepare_regression_dataset(
     lag_hours=(1, 3, 24),
     horizon: int = 1,
     target_col: str = "PM2.5",
-    filename: str = "xx_dataset_for_regression.parquet"
+    file_name: str | None = None,
 ) -> Path:
     """
     End-to-end: load -> clean -> time features -> lag features -> future target -> save parquet.
@@ -228,7 +228,9 @@ def run_prepare_regression_dataset(
     # create y = PM2.5(t+h)
     df = make_regression_target(df, target_col=target_col, horizon=horizon, out_col="y")
 
-    out = paths.data_processed / filename
+    if file_name is None:
+        file_name = "dataset_for_regression.parquet"
+    out = paths.data_processed / file_name
     df.to_parquet(out, index=False)
     return out
 
@@ -239,11 +241,12 @@ def run_train_regression(
     model_out: str = "regressor.joblib",
     metrics_out: str = "regression_metrics.json",
     preds_out: str = "regression_predictions_sample.csv",
+    dataset_file: str = "dataset_for_regression.parquet",
 ) -> dict:
     """
     Train regression model using the prepared dataset.
     """
-    ds_path = paths.data_processed / "dataset_for_regression.parquet"
+    ds_path = paths.data_processed / dataset_file
     if not ds_path.exists():
         raise FileNotFoundError(f"Missing: {ds_path}. Run regression prepare first.")
 
