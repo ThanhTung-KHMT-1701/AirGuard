@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard tương tác - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Dashboard tương tác</h2>
+    
+    <div style="margin: 2em 0;">
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Tùy chỉnh các thông số để xem kết quả phân tích theo ý muốn của bạn.
+        </p>
+    </div>
+
+    <!-- Form tùy chỉnh -->
+    <form method="POST" action="{{ url_for('interactive_dashboard') }}" style="background-color: #f8f9fa; padding: 2.5em; border-radius: 12px; margin: 2em 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: #1F62FF;">Tùy chỉnh thông số</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8em; margin-top: 1.8em;">
+            <!-- Chọn loại phân tích -->
+            <div>
+                <label for="analysis_type" style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">Loại phân tích:</label>
+                <select name="analysis_type" id="analysis_type" style="width: 100%; padding: 0.9em; border: 1px solid #ddd; border-radius: 6px; font-size: 1em;">
+                    <option value="classification" {% if params.analysis_type == 'classification' %}selected{% endif %}>Phân loại (Classification)</option>
+                    <option value="regression" {% if params.analysis_type == 'regression' %}selected{% endif %}>Hồi quy (Regression)</option>
+                    <option value="semi_supervised" {% if params.analysis_type == 'semi_supervised' %}selected{% endif %}>Semi-supervised Learning</option>
+                </select>
+            </div>
+
+            <!-- Chọn số lượng mẫu hiển thị -->
+            <div>
+                <label for="num_samples" style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">Số mẫu hiển thị:</label>
+                <select name="num_samples" id="num_samples" style="width: 100%; padding: 0.9em; border: 1px solid #ddd; border-radius: 6px; font-size: 1em;">
+                    <option value="10" {% if params.num_samples == '10' %}selected{% endif %}>10 mẫu</option>
+                    <option value="20" {% if params.num_samples == '20' %}selected{% endif %}>20 mẫu</option>
+                    <option value="50" {% if params.num_samples == '50' %}selected{% endif %}>50 mẫu</option>
+                    <option value="100" {% if params.num_samples == '100' %}selected{% endif %}>100 mẫu</option>
+                    <option value="all" {% if params.num_samples == 'all' %}selected{% endif %}>Tất cả</option>
+                </select>
+            </div>
+
+            <!-- Chọn loại metric -->
+            <div>
+                <label for="metric_type" style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">Metric hiển thị:</label>
+                <select name="metric_type" id="metric_type" style="width: 100%; padding: 0.9em; border: 1px solid #ddd; border-radius: 6px; font-size: 1em;">
+                    <option value="all" {% if params.metric_type == 'all' %}selected{% endif %}>Tất cả metrics</option>
+                    <option value="accuracy" {% if params.metric_type == 'accuracy' %}selected{% endif %}>Accuracy</option>
+                    <option value="f1" {% if params.metric_type == 'f1' %}selected{% endif %}>F1 Score</option>
+                    <option value="precision" {% if params.metric_type == 'precision' %}selected{% endif %}>Precision</option>
+                    <option value="recall" {% if params.metric_type == 'recall' %}selected{% endif %}>Recall</option>
+                </select>
+            </div>
+
+            <!-- Chọn định dạng số -->
+            <div>
+                <label for="decimal_places" style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">Số chữ số thập phân:</label>
+                <select name="decimal_places" id="decimal_places" style="width: 100%; padding: 0.9em; border: 1px solid #ddd; border-radius: 6px; font-size: 1em;">
+                    <option value="2" {% if params.decimal_places == 2 %}selected{% endif %}>2 chữ số</option>
+                    <option value="3" {% if params.decimal_places == 3 %}selected{% endif %}>3 chữ số</option>
+                    <option value="4" {% if params.decimal_places == 4 %}selected{% endif %}>4 chữ số</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-top: 2.5em; text-align: center;">
+            <button type="submit" style="background: linear-gradient(135deg, #1F62FF, #1FD2FF); color: white; padding: 1.2em 3.5em; border: none; border-radius: 10px; font-size: 1.15em; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                Áp dụng và Xem kết quả
+            </button>
+        </div>
+    </form>
+
+    <!-- Kết quả -->
+    {% if data %}
+    <div style="margin: 3em 0;">
+        <h3 style="color: #1F62FF; border-bottom: 2px solid #1FD2FF; padding-bottom: 0.8em;">
+            Kết quả phân tích: {{ params.analysis_type|replace('_', ' ')|title }}
+        </h3>
+
+        <!-- Metrics -->
+        {% if data.metrics %}
+        <div style="margin: 2em 0;">
+            <h4>Các chỉ số đánh giá</h4>
+            <div class="metrics-grid">
+                {% for key, value in data.metrics.items() %}
+                    {% if params.metric_type == 'all' or params.metric_type in key.lower() %}
+                    <div class="metric-card">
+                        <h4>{{ key.replace('_', ' ').title() }}</h4>
+                        {% if value is number %}
+                            <div class="value">
+                                {{ ("{:."+params.decimal_places|string+"f}").format(value) }}
+                            </div>
+                        {% else %}
+                            <pre class="metric-pre"><code>{{ value | pretty_json }}</code></pre>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Bảng dữ liệu -->
+        {% if data.predictions is not none and not data.predictions.empty %}
+        <div style="margin: 2em 0;">
+            <h4>Dữ liệu dự đoán ({{ data.predictions|length }} mẫu)</h4>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for col in data.predictions.columns %}
+                            <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for _, row in data.predictions.iterrows() %}
+                        <tr>
+                            {% for val in row %}
+                            <td>
+                                {% if val is number %}
+                                    {{ ("{:."+params.decimal_places|string+"f}").format(val) }}
+                                {% else %}
+                                    {{ val }}
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Thống kê tổng quan -->
+        {% if data.summary %}
+        <div style="margin: 2em 0;">
+            <h4>Thống kê tổng quan</h4>
+            <div style="background-color: #f8f9fa; padding: 1.5em; border-radius: 8px; border-left: 4px solid #1FFF2A;">
+                <ul style="line-height: 2;">
+                    {% for key, value in data.summary.items() %}
+                    <li><strong>{{ key }}:</strong> 
+                        {% if value is number %}
+                            {{ ("{:."+params.decimal_places|string+"f}").format(value) }}
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 8px; text-align: center; border-left: 4px solid #FF9A1F;">
+        <p style="font-size: 1.1em; color: #666;">
+            Vui lòng chọn các thông số và nhấn "Áp dụng và Xem kết quả" để xem phân tích.
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Auto-submit khi thay đổi analysis_type
+document.getElementById('analysis_type').addEventListener('change', function() {
+    // Optional: có thể tự động submit hoặc để người dùng nhấn nút
+    // this.form.submit();
+});
+</script>
+{% endblock %}

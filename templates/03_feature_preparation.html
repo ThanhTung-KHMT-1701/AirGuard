@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Chuẩn bị đặc trưng - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>03. Chuẩn bị đặc trưng (Feature Preparation)</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Giai đoạn này thực hiện kỹ thuật đặc trưng (Feature Engineering), bao gồm tạo các đặc trưng mới, 
+            chọn lọc đặc trưng quan trọng, và chuẩn hóa dữ liệu để cải thiện hiệu suất mô hình.
+        </p>
+    </div>
+
+    {% if data.feature_list is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Danh sách đặc trưng</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.feature_list.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.feature_list.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.cleaned_data is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Mẫu dữ liệu sau khi chuẩn bị đặc trưng (10 dòng đầu)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.cleaned_data.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.cleaned_data.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.4f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FFF2A; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Các kỹ thuật đã áp dụng</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Tạo các đặc trưng thời gian (giờ, ngày, tháng, năm)</li>
+            <li>Tạo các đặc trưng thống kê (trung bình, độ lệch chuẩn)</li>
+            <li>Chuẩn hóa dữ liệu (Standardization/Normalization)</li>
+            <li>Chọn lọc đặc trưng quan trọng</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

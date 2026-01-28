@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Dự báo ARIMA - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>08. Dự báo chuỗi thời gian ARIMA</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            ARIMA (AutoRegressive Integrated Moving Average) là mô hình chuỗi thời gian được sử dụng 
+            để dự báo nồng độ PM2.5 dựa trên xu hướng và tính mùa vụ của dữ liệu lịch sử.
+        </p>
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.raw_timeseries %}
+        <div class="image-container">
+            <h3>Chuỗi thời gian gốc (30 ngày)</h3>
+            <img src="{{ data.images.raw_timeseries }}" alt="Raw Time Series">
+            <p class="image-caption">Biến động PM2.5 theo thời gian trong 30 ngày</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.rolling_statistics %}
+        <div class="image-container">
+            <h3>Thống kê Rolling</h3>
+            <img src="{{ data.images.rolling_statistics }}" alt="Rolling Statistics">
+            <p class="image-caption">Trung bình và độ lệch chuẩn Rolling</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.acf_plot %}
+        <div class="image-container">
+            <h3>ACF Plot</h3>
+            <img src="{{ data.images.acf_plot }}" alt="ACF Plot">
+            <p class="image-caption">Autocorrelation Function - Tương quan tự động</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.pacf_plot %}
+        <div class="image-container">
+            <h3>PACF Plot</h3>
+            <img src="{{ data.images.pacf_plot }}" alt="PACF Plot">
+            <p class="image-caption">Partial Autocorrelation Function</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.forecast_vs_actual %}
+        <div class="image-container">
+            <h3>Forecast vs Actual</h3>
+            <img src="{{ data.images.forecast_vs_actual }}" alt="Forecast vs Actual">
+            <p class="image-caption">So sánh giá trị dự báo và thực tế</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.hourly_seasonality %}
+        <div class="image-container">
+            <h3>Tính mùa vụ theo giờ</h3>
+            <img src="{{ data.images.hourly_seasonality }}" alt="Hourly Seasonality">
+            <p class="image-caption">Mô hình mùa vụ của PM2.5 theo giờ trong ngày</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FFDA1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Về mô hình ARIMA</h3>
+        <p style="line-height: 1.8; margin-bottom: 1em; font-size: 1.05em;">
+            ARIMA(p, d, q) bao gồm 3 thành phần chính:
+        </p>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li><strong>AR (p)</strong>: AutoRegressive - Tự hồi quy, sử dụng giá trị quá khứ</li>
+            <li><strong>I (d)</strong>: Integrated - Tích phân, làm cho chuỗi dừng</li>
+            <li><strong>MA (q)</strong>: Moving Average - Trung bình trượt của sai số</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Ứng dụng thực tế</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Dự báo chất lượng không khí ngắn hạn (1-7 ngày)</li>
+            <li>Cảnh báo sớm về ô nhiễm không khí</li>
+            <li>Hỗ trợ lập kế hoạch hoạt động ngoài trời</li>
+            <li>Phân tích xu hướng dài hạn</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

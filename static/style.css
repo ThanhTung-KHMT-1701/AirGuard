@@ -1,0 +1,53 @@
+/* AirGuard - Custom Styles */
+
+/* Additional custom styles can be added here */
+/* Most styles are embedded in base.html for simplicity */
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 1em; }
+.mt-2 { margin-top: 2em; }
+.mt-3 { margin-top: 3em; }
+
+.mb-1 { margin-bottom: 1em; }
+.mb-2 { margin-bottom: 2em; }
+.mb-3 { margin-bottom: 3em; }
+
+.p-1 { padding: 1em; }
+.p-2 { padding: 2em; }
+.p-3 { padding: 3em; }
+
+/* Color scheme variables */
+:root {
+    --primary-blue: #1F62FF;
+    --secondary-blue: #1FD2FF;
+    --danger-red: #FF351F;
+    --success-green: #1FFF2A;
+    --warning-orange: #FF9A1F;
+    --info-yellow: #FFDA1F;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Print styles */
+@media print {
+    nav, footer {
+        display: none;
+    }
+    
+    .container {
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+    
+    img {
+        max-width: 100%;
+        page-break-inside: avoid;
+    }
+}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Chuẩn bị dữ liệu Semi-supervised - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>02. Chuẩn bị dữ liệu cho Semi-supervised Learning</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Giai đoạn này chuẩn bị dữ liệu cho việc học bán giám sát (Semi-supervised Learning), 
+            bao gồm việc tạo tập dữ liệu có nhãn (labeled) và tập dữ liệu chưa có nhãn (unlabeled) 
+            để huấn luyện các mô hình Self-training và Co-training.
+        </p>
+    </div>
+
+    <div style="margin: 2em 0;">
+        <h3>Mục tiêu</h3>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h4>Tạo tập labeled</h4>
+                <p>Chọn một phần dữ liệu có nhãn để huấn luyện mô hình ban đầu</p>
+            </div>
+            <div class="metric-card">
+                <h4>Tạo tập unlabeled</h4>
+                <p>Loại bỏ nhãn từ phần dữ liệu còn lại để mô phỏng tình huống thực tế</p>
+            </div>
+            <div class="metric-card">
+                <h4>Cân bằng dữ liệu</h4>
+                <p>Đảm bảo tỷ lệ hợp lý giữa dữ liệu có nhãn và chưa có nhãn</p>
+            </div>
+        </div>
+    </div>
+
+    {% if data.dataset_sample is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Mẫu dữ liệu Semi-supervised (10 dòng đầu)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.dataset_sample.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.dataset_sample.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.2f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FD2FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết luận</h3>
+        <p style="line-height: 1.8; font-size: 1.05em;">
+            Dữ liệu đã được chuẩn bị thành công cho Semi-supervised Learning. 
+            Tập dữ liệu này sẽ được sử dụng để huấn luyện các mô hình Self-training và Co-training 
+            trong các bước tiếp theo.
+        </p>
+    </div>
+</div>
+{% endblock %}

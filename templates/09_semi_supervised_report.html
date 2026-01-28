@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Báo cáo Semi-supervised - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>09. Báo cáo Semi-supervised Learning</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Báo cáo tổng hợp so sánh hiệu suất giữa các phương pháp học giám sát (Supervised Learning) 
+            và học bán giám sát (Semi-supervised Learning) bao gồm Self-training và Co-training.
+        </p>
+    </div>
+
+    {% if data.images.supervised_vs_semi %}
+    <div class="image-container">
+        <h3>So sánh Supervised vs Semi-supervised</h3>
+        <img src="{{ data.images.supervised_vs_semi }}" alt="Supervised vs Semi-supervised">
+        <p class="image-caption">So sánh hiệu suất giữa các phương pháp học</p>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0;">
+        <h3>Self-training - Phân tích chi tiết</h3>
+        
+        <div class="image-grid">
+            {% if data.images.self_training_dynamics %}
+            <div class="image-container">
+                <img src="{{ data.images.self_training_dynamics }}" alt="Self-training Dynamics">
+                <p class="image-caption">Quá trình Self-training qua các vòng lặp</p>
+            </div>
+            {% endif %}
+
+            {% if data.images.self_training_timeline %}
+            <div class="image-container">
+                <img src="{{ data.images.self_training_timeline }}" alt="Self-training Timeline">
+                <p class="image-caption">Timeline theo trạm quan trắc</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if data.images.self_training_alerts %}
+        <div class="image-container">
+            <img src="{{ data.images.self_training_alerts }}" alt="Self-training Top Alerts">
+            <p class="image-caption">Top cảnh báo chất lượng không khí từ Self-training</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin: 3em 0;">
+        <h3>Co-training - Phân tích chi tiết</h3>
+        
+        <div class="image-grid">
+            {% if data.images.co_training_dynamics %}
+            <div class="image-container">
+                <img src="{{ data.images.co_training_dynamics }}" alt="Co-training Dynamics">
+                <p class="image-caption">Quá trình Co-training qua các vòng lặp</p>
+            </div>
+            {% endif %}
+
+            {% if data.images.co_training_timeline %}
+            <div class="image-container">
+                <img src="{{ data.images.co_training_timeline }}" alt="Co-training Timeline">
+                <p class="image-caption">Timeline theo trạm quan trắc</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if data.images.co_training_alerts %}
+        <div class="image-container">
+            <img src="{{ data.images.co_training_alerts }}" alt="Co-training Top Alerts">
+            <p class="image-caption">Top cảnh báo chất lượng không khí từ Co-training</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FFF2A; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết luận</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Semi-supervised Learning giúp cải thiện hiệu suất khi dữ liệu có nhãn hạn chế</li>
+            <li>Co-training thường cho kết quả tốt hơn Self-training nhờ tận dụng nhiều quan điểm</li>
+            <li>Cả hai phương pháp đều giúp phát hiện cảnh báo chất lượng không khí hiệu quả</li>
+            <li>Việc chọn ngưỡng tin cậy phù hợp là yếu tố quan trọng</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Chào mừng đến với AirGuard</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Giới thiệu về dự án</h3>
+        <p style="font-size: 1.1em; line-height: 1.8; margin: 1em 0;">
+            AirGuard là hệ thống giám sát và dự báo chất lượng không khí tại Bắc Kinh, Trung Quốc. 
+            Dự án sử dụng dữ liệu từ 12 trạm quan trắc trong giai đoạn 2013-2017, áp dụng các kỹ thuật 
+            học máy tiên tiến để phân tích, phân loại và dự báo chất lượng không khí.
+        </p>
+    </div>
+
+    <div style="margin: 2em 0;">
+        <h3>Mục tiêu của dự án</h3>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h4>Phân loại chất lượng không khí</h4>
+                <p>Xác định mức độ ô nhiễm (Good, Moderate, Unhealthy, Very Unhealthy, Hazardous) dựa trên nồng độ PM2.5</p>
+            </div>
+            <div class="metric-card">
+                <h4>Dự báo nồng độ PM2.5</h4>
+                <p>Dự đoán giá trị PM2.5 trong tương lai sử dụng mô hình hồi quy và chuỗi thời gian</p>
+            </div>
+            <div class="metric-card">
+                <h4>Semi-supervised Learning</h4>
+                <p>Tận dụng dữ liệu chưa gán nhãn để cải thiện hiệu suất mô hình với Self-training và Co-training</p>
+            </div>
+            <div class="metric-card">
+                <h4>Phân tích và Trực quan hóa</h4>
+                <p>Cung cấp các báo cáo chi tiết và trực quan về chất lượng không khí qua các giai đoạn</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin: 2em 0;">
+        <h3>Cấu trúc dự án</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5em; margin-top: 1.5em;">
+            <div style="border-left: 4px solid #1F62FF; padding: 1.5em; border-radius: 8px; background-color: #f8f9fa; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <h4 style="color: #1F62FF; margin-top: 0;">Phase 1: Tiền xử lý và Phân tích</h4>
+                <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                    <li>Tiền xử lý dữ liệu và EDA</li>
+                    <li>Chuẩn bị dữ liệu Semi-supervised</li>
+                    <li>Chuẩn bị đặc trưng</li>
+                </ul>
+            </div>
+            <div style="border-left: 4px solid #1FD2FF; padding: 1.5em; border-radius: 8px; background-color: #f8f9fa; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <h4 style="color: #1FD2FF; margin-top: 0;">Phase 2: Semi-supervised Learning</h4>
+                <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                    <li>Self-training</li>
+                    <li>Co-training</li>
+                    <li>Báo cáo và Đánh giá</li>
+                </ul>
+            </div>
+            <div style="border-left: 4px solid #1FFF2A; padding: 1.5em; border-radius: 8px; background-color: #f8f9fa; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <h4 style="color: #1FFF2A; margin-top: 0;">Phase 3: Mô hình</h4>
+                <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                    <li>Mô hình phân loại</li>
+                    <li>Mô hình hồi quy</li>
+                    <li>Dự báo ARIMA</li>
+                </ul>
+            </div>
+            <div style="border-left: 4px solid #FF9A1F; padding: 1.5em; border-radius: 8px; background-color: #f8f9fa; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <h4 style="color: #FF9A1F; margin-top: 0;">Phase 4: Phân tích nâng cao</h4>
+                <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                    <li>So sánh các phương pháp</li>
+                    <li>Trả lời các câu hỏi nghiên cứu</li>
+                    <li>Baseline và Đánh giá</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin: 2em 0;">
+        <h3>Công nghệ sử dụng</h3>
+        <div style="background: linear-gradient(135deg, #f8f9fa, #ffffff); padding: 2em; border-radius: 12px; margin-top: 1.5em; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1em;">
+                <div>
+                    <strong style="color: #1F62FF;">Machine Learning:</strong>
+                    <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                        <li>Scikit-learn</li>
+                        <li>XGBoost</li>
+                        <li>LightGBM</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #1F62FF;">Data Processing:</strong>
+                    <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                        <li>Pandas</li>
+                        <li>NumPy</li>
+                        <li>Parquet</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #1F62FF;">Visualization:</strong>
+                    <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                        <li>Matplotlib</li>
+                        <li>Seaborn</li>
+                        <li>Plotly</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #1F62FF;">Time Series:</strong>
+                    <ul style="margin-top: 0.5em; line-height: 1.8; padding-left: 1.2em;">
+                        <li>Statsmodels</li>
+                        <li>ARIMA</li>
+                        <li>Prophet</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin: 3em 0;">
+        <h3>Hướng dẫn sử dụng</h3>
+        <div style="background-color: #f8f9fa; padding: 2em; border-radius: 12px; border-left: 5px solid #1F62FF; margin-top: 1.5em; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+            <ol style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+                <li>Sử dụng menu điều hướng phía trên để truy cập các phần khác nhau của dự án</li>
+                <li><strong>🆕 Dashboard tương tác:</strong> Tùy chỉnh thông số và xem kết quả động</li>
+                <li>Bắt đầu từ <strong>"Tiền xử lý & Phân tích"</strong> để hiểu về dữ liệu gốc</li>
+                <li>Khám phá <strong>"Semi-supervised Learning"</strong> để xem các kỹ thuật học bán giám sát</li>
+                <li>Xem <strong>"Mô hình"</strong> để tìm hiểu các mô hình phân loại, hồi quy và dự báo</li>
+                <li><strong>🆕 So sánh mô hình:</strong> So sánh hiệu suất giữa các mô hình khác nhau</li>
+                <li>Tham khảo <strong>"Câu hỏi & So sánh"</strong> để hiểu sâu hơn về các phân tích so sánh</li>
+            </ol>
+        </div>
+    </div>
+
+    <div style="margin: 3em 0; text-align: center; padding: 2.5em; background: linear-gradient(135deg, #1F62FF, #1FD2FF); color: white; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);">
+        <h3 style="color: white; margin-bottom: 1.2em; font-size: 1.8em;">Bắt đầu khám phá dự án</h3>
+        <p style="font-size: 1.15em; margin-bottom: 2em;">Chọn một mục từ menu điều hướng để xem chi tiết</p>
+        <div style="display: flex; gap: 1.2em; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('interactive_dashboard') }}" style="background: linear-gradient(135deg, #1FFF2A, #00CC22); color: white; padding: 1.2em 2.5em; border-radius: 10px; text-decoration: none; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 1.05em;">
+                📊 Dashboard tương tác
+            </a>
+            <a href="{{ url_for('model_comparison') }}" style="background: linear-gradient(135deg, #FF9A1F, #FF6600); color: white; padding: 1.2em 2.5em; border-radius: 10px; text-decoration: none; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 1.05em;">
+                ⚖️ So sánh mô hình
+            </a>
+            <a href="{{ url_for('preprocessing_eda') }}" style="background-color: white; color: #1F62FF; padding: 1.2em 2.5em; border-radius: 10px; text-decoration: none; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 1.05em;">
+                Bắt đầu với EDA
+            </a>
+            <a href="{{ url_for('semi_supervised_report') }}" style="background-color: white; color: #1F62FF; padding: 1.2em 2.5em; border-radius: 10px; text-decoration: none; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 1.05em;">
+                Xem báo cáo tổng hợp
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

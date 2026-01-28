@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Câu hỏi 03 - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>12. Câu hỏi 03</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Đề bài</h3>
+        <p style="font-size: 1.05em; line-height: 1.8; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FFF2A; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            So sánh hiệu suất của các phương pháp Semi-supervised Learning dựa trên đồ thị (Graph-based methods).
+        </p>
+    </div>
+
+    {% if data.images.graph_based_comparison %}
+    <div class="image-container">
+        <h3>So sánh phương pháp dựa trên đồ thị</h3>
+        <img src="{{ data.images.graph_based_comparison }}" alt="Graph-based Comparison">
+        <p class="image-caption">So sánh hiệu suất các phương pháp Graph-based SSL</p>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Các phương pháp Graph-based</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li><strong>Label Propagation</strong>: Lan truyền nhãn qua đồ thị</li>
+            <li><strong>Label Spreading</strong>: Cải tiến của Label Propagation với regularization</li>
+            <li><strong>Graph Neural Networks</strong>: Mạng nơ-ron trên đồ thị</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FFDA1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Ưu điểm của Graph-based methods</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Tận dụng cấu trúc quan hệ giữa các mẫu dữ liệu</li>
+            <li>Hiệu quả khi dữ liệu có cấu trúc đồ thị tự nhiên</li>
+            <li>Không cần giả định về phân bố dữ liệu</li>
+            <li>Có thể xử lý dữ liệu phi tuyến tính</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF351F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết luận</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Label Spreading thường cho kết quả tốt nhất trên dữ liệu này</li>
+            <li>Graph-based methods phù hợp khi có quan hệ không gian-thời gian</li>
+            <li>Chi phí tính toán cao hơn so với Self-training và Co-training</li>
+            <li>Cần điều chỉnh tham số đồ thị (số láng giềng, trọng số cạnh)</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}So sánh mô hình - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>So sánh mô hình nâng cao</h2>
+    
+    <div style="margin: 2em 0;">
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            So sánh hiệu suất giữa các mô hình khác nhau với các tham số tùy chỉnh.
+        </p>
+    </div>
+
+    <!-- Form so sánh -->
+    <form method="POST" action="{{ url_for('model_comparison') }}" style="background-color: #f8f9fa; padding: 2.5em; border-radius: 12px; margin: 2em 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: #1F62FF;">Chọn mô hình để so sánh</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.8em; margin-top: 1.8em;">
+            <!-- Chọn mô hình 1 -->
+            <div>
+                <label style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">
+                    <input type="checkbox" name="models" value="classification" {% if 'classification' in params.models %}checked{% endif %}>
+                    Classification Model
+                </label>
+            </div>
+
+            <div>
+                <label style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">
+                    <input type="checkbox" name="models" value="regression" {% if 'regression' in params.models %}checked{% endif %}>
+                    Regression Model
+                </label>
+            </div>
+
+            <div>
+                <label style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">
+                    <input type="checkbox" name="models" value="self_training" {% if 'self_training' in params.models %}checked{% endif %}>
+                    Self-training
+                </label>
+            </div>
+
+            <div>
+                <label style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">
+                    <input type="checkbox" name="models" value="co_training" {% if 'co_training' in params.models %}checked{% endif %}>
+                    Co-training
+                </label>
+            </div>
+        </div>
+
+        <div style="margin-top: 2em;">
+            <label for="comparison_metric" style="display: block; font-weight: bold; margin-bottom: 0.6em; font-size: 1.05em;">Metric để so sánh:</label>
+            <select name="comparison_metric" id="comparison_metric" style="width: 100%; max-width: 400px; padding: 0.9em; border: 1px solid #ddd; border-radius: 6px; font-size: 1em;">
+                <option value="accuracy" {% if params.comparison_metric == 'accuracy' %}selected{% endif %}>Accuracy</option>
+                <option value="f1_macro" {% if params.comparison_metric == 'f1_macro' %}selected{% endif %}>F1 Macro</option>
+                <option value="f1_weighted" {% if params.comparison_metric == 'f1_weighted' %}selected{% endif %}>F1 Weighted</option>
+                <option value="precision_macro" {% if params.comparison_metric == 'precision_macro' %}selected{% endif %}>Precision Macro</option>
+                <option value="recall_macro" {% if params.comparison_metric == 'recall_macro' %}selected{% endif %}>Recall Macro</option>
+            </select>
+        </div>
+
+        <div style="margin-top: 2.5em; text-align: center;">
+            <button type="submit" style="background: linear-gradient(135deg, #1F62FF, #1FD2FF); color: white; padding: 1.2em 3.5em; border: none; border-radius: 10px; font-size: 1.15em; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                So sánh các mô hình đã chọn
+            </button>
+        </div>
+    </form>
+
+    <!-- Kết quả so sánh -->
+    {% if comparison_results %}
+    <div style="margin: 3em 0;">
+        <h3 style="color: #1F62FF; border-bottom: 2px solid #1FD2FF; padding-bottom: 0.8em;">
+            Kết quả so sánh: {{ params.comparison_metric|replace('_', ' ')|title }}
+        </h3>
+
+        <!-- Bảng so sánh -->
+        <div style="margin: 2em 0;">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mô hình</th>
+                            <th>{{ params.comparison_metric|replace('_', ' ')|title }}</th>
+                            <th>Xếp hạng</th>
+                            <th>Nhận xét</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in comparison_results %}
+                        <tr {% if result.rank == 1 %}style="background-color: #e8f5e9;"{% endif %}>
+                            <td><strong>{{ result.model_name }}</strong></td>
+                            <td>{{ "%.4f"|format(result.score) }}</td>
+                            <td>
+                                {% if result.rank == 1 %}
+                                    🥇 #{{ result.rank }}
+                                {% elif result.rank == 2 %}
+                                    🥈 #{{ result.rank }}
+                                {% elif result.rank == 3 %}
+                                    🥉 #{{ result.rank }}
+                                {% else %}
+                                    #{{ result.rank }}
+                                {% endif %}
+                            </td>
+                            <td>{{ result.comment }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Biểu đồ so sánh (dạng bar chart HTML/CSS) -->
+        <div style="margin: 2em 0;">
+            <h4>Visualization</h4>
+            <div style="background-color: #f8f9fa; padding: 2em; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                {% for result in comparison_results %}
+                <div style="margin: 1em 0;">
+                    <div style="display: flex; align-items: center;">
+                        <div style="width: 200px; font-weight: bold;">{{ result.model_name }}:</div>
+                        <div style="flex: 1; background-color: #e0e0e0; border-radius: 6px; height: 35px; position: relative;">
+                            <div style="background: linear-gradient(135deg, #1F62FF, #1FD2FF); width: {{ (result.score * 100)|int }}%; height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 0.8em; color: white; font-weight: bold; font-size: 0.95em;">
+                                {{ "%.2f"|format(result.score * 100) }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Thống kê chi tiết -->
+        {% if detailed_stats %}
+        <div style="margin: 2em 0;">
+            <h4>Thống kê chi tiết</h4>
+            <div class="metrics-grid">
+                {% for stat_name, stat_value in detailed_stats.items() %}
+                <div class="metric-card">
+                    <h4>{{ stat_name }}</h4>
+                    <div class="value">{{ "%.4f"|format(stat_value) if stat_value is number else stat_value }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div style="margin: 3em 0; padding: 2.5em; background-color: #f8f9fa; border-radius: 12px; text-align: center; border-left: 5px solid #FF9A1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <p style="font-size: 1.1em; color: #666;">
+            Vui lòng chọn ít nhất 1 mô hình và nhấn "So sánh các mô hình đã chọn".
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Self-training - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>04. Self-training</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Self-training là phương pháp Semi-supervised Learning trong đó mô hình được huấn luyện trên 
+            dữ liệu có nhãn, sau đó tự dự đoán nhãn cho dữ liệu chưa có nhãn với độ tin cậy cao và 
+            thêm chúng vào tập huấn luyện để cải thiện hiệu suất.
+        </p>
+    </div>
+
+    {% if data.metrics %}
+    <div style="margin: 2em 0;">
+        <h3>Kết quả đánh giá</h3>
+        <div class="metrics-grid">
+            {% for key, value in data.metrics.items() %}
+            <div class="metric-card">
+                <h4>{{ key.replace('_', ' ').title() }}</h4>
+                {% if value is number %}
+                    <div class="value">
+                        {{ "%.4f"|format(value) }}
+                    </div>
+                {% else %}
+                    {# Đối với chuỗi JSON, dicts, lists - sử dụng preformatted text #}
+                    <pre class="metric-pre"><code>{{ value | pretty_json }}</code></pre>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.images.dynamics %}
+    <div class="image-container">
+        <h3>Quá trình Self-training</h3>
+        <img src="{{ data.images.dynamics }}" alt="Self-training Dynamics">
+        <p class="image-caption">Sự thay đổi của các chỉ số qua các vòng lặp Self-training</p>
+    </div>
+    {% endif %}
+
+    {% if data.predictions_sample is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Mẫu dự đoán (10 dòng đầu)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.predictions_sample.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.predictions_sample.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.4f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.alerts_sample is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Cảnh báo chất lượng không khí (10 cảnh báo đầu)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.alerts_sample.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.alerts_sample.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.2f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Ưu điểm của Self-training</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Đơn giản và dễ triển khai</li>
+            <li>Không cần nhiều mô hình như Co-training</li>
+            <li>Có thể cải thiện hiệu suất khi có nhiều dữ liệu chưa nhãn</li>
+            <li>Linh hoạt với nhiều loại mô hình cơ sở</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

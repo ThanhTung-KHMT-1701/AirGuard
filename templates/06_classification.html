@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Mô hình phân loại - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>06. Mô hình phân loại (Classification)</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Mô hình phân loại được sử dụng để dự đoán mức độ chất lượng không khí (Good, Moderate, Unhealthy, 
+            Very Unhealthy, Hazardous) dựa trên các đặc trưng môi trường và khí tượng.
+        </p>
+    </div>
+
+    {% if data.metrics %}
+    <div style="margin: 2em 0;">
+        <h3>Kết quả đánh giá
+            <a href="{{ url_for('serve_processed_data', filename=data.metrics_file) }}" target="_blank" style="font-size: 0.7em; font-weight: normal; margin-left: 1em;">(Xem file gốc)</a>
+        </h3>
+        <div class="metrics-grid">
+            {% for key, value in data.metrics.items() %}
+            <div class="metric-card">
+                <h4>{{ key.replace('_', ' ').title() }}</h4>
+                {% if value is number %}
+                    <div class="value">
+                        {{ "%.4f"|format(value) }}
+                    </div>
+                {% else %}
+                    <pre class="metric-pre"><code>{{ value | pretty_json }}</code></pre>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.images.confusion_matrix %}
+    <div class="image-container">
+        <h3>Ma trận nhầm lẫn (Confusion Matrix)</h3>
+        <img src="{{ data.images.confusion_matrix }}" alt="Confusion Matrix" class="zoomable-img">
+        <p class="image-caption">Ma trận nhầm lẫn thể hiện hiệu suất phân loại cho từng lớp. (Nhấp vào ảnh để phóng to)</p>
+    </div>
+    {% endif %}
+
+    {% if data.classification_report is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Báo cáo phân loại chi tiết
+            <a href="{{ url_for('serve_processed_data', filename=data.classification_report_file) }}" target="_blank" style="font-size: 0.7em; font-weight: normal; margin-left: 1em;">(Xem file gốc)</a>
+        </h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.classification_report.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.classification_report.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.4f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.predictions_sample is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Mẫu dự đoán (10 dòng đầu)
+            <a href="{{ url_for('serve_processed_data', filename=data.predictions_sample_file) }}" target="_blank" style="font-size: 0.7em; font-weight: normal; margin-left: 1em;">(Xem file gốc)</a>
+        </h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.predictions_sample.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.predictions_sample.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.2f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Các thuật toán đã thử nghiệm</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Random Forest Classifier</li>
+            <li>XGBoost Classifier</li>
+            <li>LightGBM Classifier</li>
+            <li>Gradient Boosting Classifier</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

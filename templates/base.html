@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AirGuard - Hệ thống giám sát chất lượng không khí{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 1em;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1F62FF, #1FD2FF);
+            color: white;
+            padding: 1.5em;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 0.5em;
+        }
+
+        header p {
+            font-size: 1.15em;
+            opacity: 0.95;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-radius: 10px;
+            margin: 1em 2em;
+            /* overflow: hidden; */ /* Bỏ thuộc tính này để menu con không bị cắt */
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav li {
+            position: relative;
+        }
+
+        nav a {
+            display: block;
+            padding: 1em 1.2em;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            border-radius: 8px; /* Bo góc cho từng mục */
+            margin: 0.2em 0.3em; /* Khoảng cách giữa các mục */
+        }
+
+        nav a:hover {
+            background-color: rgba(31, 98, 255, 0.1); /* Màu nền nhạt hơn, có trong suốt */
+            color: #1F62FF; /* Đổi màu chữ */
+        }
+
+        nav a.active {
+            background-color: #1FD2FF;
+            color: white;
+        }
+
+        /* Dropdown menu */
+        nav .dropdown {
+            position: relative;
+        }
+
+        nav .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1001;
+            top: 100%;
+            left: 0;
+            border-radius: 8px; /* Bo góc cho dropdown */
+            overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài góc bo */
+        }
+
+        nav .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        nav .dropdown-content a {
+            padding: 0.8em 1.2em;
+            border-bottom: 1px solid #f0f0f0;
+            margin: 0; /* Loại bỏ margin để các mục liền kề */
+            border-radius: 0; /* Không bo góc cho từng mục trong dropdown */
+        }
+
+        nav .dropdown-content a:hover {
+            background-color: rgba(31, 98, 255, 0.1); /* Hover cho mục dropdown */
+            color: #1F62FF;
+        }
+
+        nav .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        /* Main content */
+        main {
+            max-width: 1400px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2.5em;
+            margin-bottom: 2em;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .container h2 {
+            color: #1F62FF;
+            margin-bottom: 1em;
+            font-size: 2em;
+            padding-bottom: 0.8em;
+            border-bottom: 2px solid #1FD2FF;
+        }
+
+        .container h3 {
+            color: #333;
+            margin: 1.8em 0 1.2em 0;
+            font-size: 1.6em;
+        }
+
+        .container h4 {
+            color: #555;
+            margin: 1.2em 0 0.8em 0;
+            font-size: 1.3em;
+        }
+
+        /* Images */
+        .image-container {
+            margin: 2em 0;
+            text-align: center;
+            border-radius: 10px;
+            overflow: hidden; /* Đảm bảo ảnh bo góc */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */ /* Đã chuyển shadow ra ngoài container */
+        }
+
+        .image-caption {
+            margin-top: 1em;
+            font-style: italic;
+            color: #666;
+            font-size: 0.95em;
+            padding: 0.5em 1em; /* Thêm padding cho caption */
+        }
+
+        /* Tables */
+        .table-container {
+            margin: 2em 0;
+            overflow-x: auto;
+            border-radius: 8px;
+            overflow: hidden; /* Bo góc cho bảng */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em; /* Giảm cỡ chữ bảng */
+        }
+
+        table th {
+            background: linear-gradient(135deg, #1F62FF, #1FD2FF);
+            color: white;
+            padding: 0.9em 1em; /* Giảm padding */
+            text-align: left;
+            font-weight: bold;
+        }
+
+        table td {
+            padding: 0.8em 1em; /* Giảm padding */
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table tr:hover {
+            background-color: #f0f8ff; /* Màu hover nhạt hơn */
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Metrics cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Điều chỉnh minmax */
+            gap: 1.8em;
+            margin: 2em 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-left: 5px solid #1F62FF; /* Tăng độ dày border */
+            padding: 1.8em;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h4 {
+            color: #1F62FF;
+            margin: 0 0 0.8em 0;
+            font-size: 1em; /* Giảm cỡ chữ tiêu đề card */
+        }
+
+        .metric-card .value {
+            font-size: 1.9em; /* Giảm cỡ chữ giá trị */
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Styling for preformatted JSON in metric cards */
+        .metric-card .metric-pre {
+            background-color: #e9ecef;
+            border-radius: 6px;
+            padding: 0.8em;
+            font-size: 0.8em; /* Cỡ chữ nhỏ hơn cho code */
+            text-align: left;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px; /* Giới hạn chiều cao và cho phép cuộn */
+            overflow-y: auto;
+            color: #495057;
+            margin-top: 0.5em;
+        }
+
+        .metric-card .metric-pre code {
+            font-family: Consolas, 'Courier New', monospace;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2.5em;
+            margin-top: 5em;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        footer p {
+            margin: 0.8em 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav {
+                margin: 0.5em 1em;
+            }
+
+            nav .dropdown-content {
+                position: relative;
+                box-shadow: none;
+            }
+
+            main {
+                padding: 0 1em;
+            }
+
+            .container {
+                padding: 1.8em;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 1em;
+            }
+
+            footer {
+                padding: 1.5em;
+            }
+        }
+
+        /* Grid layout for images */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Điều chỉnh minmax */
+            gap: 2.5em;
+            margin: 2.5em 0;
+        }
+
+        @media (max-width: 768px) {
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom styles for interactive dashboard forms */
+        form {
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 2.5em;
+        }
+
+        form label {
+            font-size: 1.05em;
+        }
+
+        form select, form input[type="checkbox"] {
+            padding: 0.7em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        form button[type="submit"] {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Styling for image zoom modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 1200px;
+            animation-name: zoom;
+            animation-duration: 0.5s;
+        }
+
+        @keyframes zoom {
+            from {transform:scale(0)}
+            to {transform:scale(1)}
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Add cursor pointer to zoomable images */
+        .zoomable-img {
+            cursor: zoom-in;
+            transition: 0.3s;
+        }
+
+        .zoomable-img:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AirGuard</h1>
+        <p>Hệ thống giám sát và dự báo chất lượng không khí tại Bắc Kinh</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Trang chủ</a></li>
+            
+            <li><a href="{{ url_for('interactive_dashboard') }}" style="background-color: #1FFF2A; color: white;">📊 Dashboard tương tác</a></li>
+            
+            <li class="dropdown">
+                <a href="#">Tiền xử lý & Phân tích ▼</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('preprocessing_eda') }}">01. Tiền xử lý và EDA</a>
+                    <a href="{{ url_for('semi_dataset') }}">02. Chuẩn bị dữ liệu Semi-supervised</a>
+                    <a href="{{ url_for('feature_preparation') }}">03. Chuẩn bị đặc trưng</a>
+                </div>
+            </li>
+
+            <li class="dropdown">
+                <a href="#">Semi-supervised Learning ▼</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('self_training') }}">04. Self-training</a>
+                    <a href="{{ url_for('co_training') }}">05. Co-training</a>
+                    <a href="{{ url_for('semi_supervised_report') }}">09. Báo cáo Semi-supervised</a>
+                </div>
+            </li>
+
+            <li class="dropdown">
+                <a href="#">Mô hình ▼</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('classification') }}">06. Phân loại (Classification)</a>
+                    <a href="{{ url_for('regression') }}">07. Hồi quy (Regression)</a>
+                    <a href="{{ url_for('arima_forecasting') }}">08. Dự báo ARIMA</a>
+                </div>
+            </li>
+
+            <li class="dropdown">
+                <a href="#">Câu hỏi & So sánh ▼</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('model_comparison') }}" style="background-color: #e3f2fd;">⚖️ So sánh mô hình nâng cao</a>
+                    <a href="{{ url_for('question_01') }}">10. Câu hỏi 01</a>
+                    <a href="{{ url_for('question_02') }}">11. Câu hỏi 02</a>
+                    <a href="{{ url_for('question_03') }}">12. Câu hỏi 03</a>
+                    <a href="{{ url_for('question_04') }}">13. Câu hỏi 04</a>
+                    <a href="{{ url_for('baseline_comparison') }}">14. Baseline và So sánh</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AirGuard Project - Hệ thống giám sát chất lượng không khí</p>
+        <p>Dự án phân tích dữ liệu chất lượng không khí tại Bắc Kinh (2013-2017)</p>
+    </footer>
+
+    <!-- Image Zoom Modal -->
+    <div id="imageModal" class="modal">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the modal
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImage");
+            
+            // Get all images with the zoomable class
+            var images = document.querySelectorAll('.zoomable-img');
+            images.forEach(function(img) {
+                img.onclick = function(){
+                    modal.style.display = "block";
+                    modalImg.src = this.src;
+                }
+            });
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("modal-close")[0];
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() { 
+                modal.style.display = "none";
+            }
+
+            // Close the modal when clicking outside the image
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Câu hỏi 04 - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>13. Câu hỏi 04</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Đề bài</h3>
+        <p style="font-size: 1.05em; line-height: 1.8; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF9A1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            Phân tích hiệu suất của mô hình trên các lớp hiếm (rare classes) và đề xuất giải pháp cải thiện.
+        </p>
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.f1_comparison %}
+        <div class="image-container">
+            <h3>So sánh F1 Macro</h3>
+            <img src="{{ data.images.f1_comparison }}" alt="F1 Comparison">
+            <p class="image-caption">So sánh F1 score giữa các phương pháp</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.f1_per_class %}
+        <div class="image-container">
+            <h3>F1 Score từng lớp</h3>
+            <img src="{{ data.images.f1_per_class }}" alt="F1 per Class">
+            <p class="image-caption">F1 score chi tiết cho từng lớp chất lượng không khí</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.recall_rare %}
+        <div class="image-container">
+            <h3>Recall trên các lớp hiếm</h3>
+            <img src="{{ data.images.recall_rare }}" alt="Recall Rare Classes">
+            <p class="image-caption">Recall của các lớp hiếm (Very Unhealthy, Hazardous)</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.confidence_dist %}
+        <div class="image-container">
+            <h3>Phân bố độ tin cậy</h3>
+            <img src="{{ data.images.confidence_dist }}" alt="Confidence Distribution">
+            <p class="image-caption">Phân bố độ tin cậy dự đoán cho các lớp</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF351F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Thách thức với lớp hiếm</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Số lượng mẫu không cân bằng giữa các lớp</li>
+            <li>Mô hình thiên vị về lớp đa số</li>
+            <li>Khó học được đặc trưng của lớp hiếm</li>
+            <li>Metrics tổng thể có thể che giấu hiệu suất kém trên lớp hiếm</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FFF2A; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Giải pháp đề xuất</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li><strong>SMOTE</strong>: Tạo mẫu tổng hợp cho lớp thiểu số</li>
+            <li><strong>Class Weights</strong>: Điều chỉnh trọng số lớp trong hàm loss</li>
+            <li><strong>Focal Loss</strong>: Tập trung vào các mẫu khó phân loại</li>
+            <li><strong>Ensemble Methods</strong>: Kết hợp nhiều mô hình với chiến lược khác nhau</li>
+            <li><strong>Cost-sensitive Learning</strong>: Gán chi phí cao hơn cho lỗi trên lớp hiếm</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết luận</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Semi-supervised Learning giúp cải thiện hiệu suất trên lớp hiếm</li>
+            <li>Kết hợp nhiều kỹ thuật cân bằng dữ liệu mang lại kết quả tốt nhất</li>
+            <li>Cần theo dõi metrics cụ thể cho từng lớp, không chỉ accuracy tổng thể</li>
+            <li>F1-score và Recall quan trọng hơn Precision với lớp hiếm trong bài toán này</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

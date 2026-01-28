@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Câu hỏi 01 - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>10. Câu hỏi 01</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Đề bài</h3>
+        <p style="font-size: 1.05em; line-height: 1.8; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            So sánh hiệu suất của các thuật toán phân loại khác nhau trên tập dữ liệu chất lượng không khí.
+        </p>
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.f1_comparison %}
+        <div class="image-container">
+            <h3>So sánh F1 Macro</h3>
+            <img src="{{ data.images.f1_comparison }}" alt="F1 Macro Comparison">
+            <p class="image-caption">So sánh điểm F1 Macro giữa các thuật toán</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.f1_heatmap %}
+        <div class="image-container">
+            <h3>Heatmap F1 Macro</h3>
+            <img src="{{ data.images.f1_heatmap }}" alt="F1 Macro Heatmap">
+            <p class="image-caption">Heatmap thể hiện hiệu suất các thuật toán</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if data.images.f1_line_chart %}
+    <div class="image-container">
+        <h3>Line Chart F1 Macro</h3>
+        <img src="{{ data.images.f1_line_chart }}" alt="F1 Macro Line Chart">
+        <p class="image-caption">Biểu đồ đường thể hiện xu hướng hiệu suất</p>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FFF2A; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết luận</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>XGBoost và LightGBM thường cho kết quả tốt nhất trên bài toán này</li>
+            <li>Random Forest cũng đạt hiệu suất tốt và ổn định</li>
+            <li>Gradient Boosting mang lại sự cân bằng giữa hiệu suất và thời gian huấn luyện</li>
+            <li>Lựa chọn thuật toán phụ thuộc vào yêu cầu cụ thể về độ chính xác và tốc độ</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Tiền xử lý và EDA - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>01. Tiền xử lý dữ liệu và Phân tích thăm dò (EDA)</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Giai đoạn này thực hiện làm sạch dữ liệu, xử lý giá trị thiếu, và phân tích khám phá dữ liệu 
+            từ 12 trạm quan trắc chất lượng không khí tại Bắc Kinh trong giai đoạn 2013-2017.
+        </p>
+    </div>
+
+    {% if data.missing_rate is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Tỷ lệ giá trị thiếu</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.missing_rate.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.missing_rate.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.2f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.class_distribution is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Phân bố các lớp chất lượng không khí</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.class_distribution.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.class_distribution.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.images.class_distribution %}
+    <div class="image-container">
+        <h3>Biểu đồ phân bố lớp</h3>
+        <img src="{{ data.images.class_distribution }}" alt="Class Distribution">
+        <p class="image-caption">Phân bố các mức độ chất lượng không khí trong dữ liệu</p>
+    </div>
+    {% endif %}
+
+    {% if data.raw_data_sample is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Mẫu dữ liệu gốc (10 dòng đầu)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.raw_data_sample.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.raw_data_sample.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.2f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if data.cleaned_data_sample is not none %}
+    <div style="margin: 2em 0;">
+        <h3>Mẫu dữ liệu sau khi làm sạch (10 dòng đầu)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in data.cleaned_data_sample.columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in data.cleaned_data_sample.iterrows() %}
+                    <tr>
+                        {% for val in row %}
+                        <td>{{ "%.2f"|format(val) if val is number else val }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết luận</h3>
+        <p style="line-height: 1.8; font-size: 1.05em;">
+            Dữ liệu đã được làm sạch thành công, xử lý các giá trị thiếu và ngoại lệ. 
+            Phân bố các lớp cho thấy sự mất cân bằng, đây là thách thức quan trọng cần giải quyết 
+            trong các bước tiếp theo.
+        </p>
+    </div>
+</div>
+{% endblock %}

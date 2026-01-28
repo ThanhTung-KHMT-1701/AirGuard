@@ -8,3 +8,5 @@ papermill>=2.5
 ucimlrepo>=0.0.7
 nbformat>=5.9
 statsmodels>=0.14
+Flask>=3.0
+Werkzeug>=3.0

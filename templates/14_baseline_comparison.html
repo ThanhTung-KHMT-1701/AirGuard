@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Baseline và So sánh - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>14. Baseline và So sánh tổng thể</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Tổng quan</h3>
+        <p style="font-size: 1.05em; line-height: 1.8;">
+            Phần này so sánh toàn diện giữa các phương pháp baseline đơn giản và các mô hình phức tạp hơn, 
+            đánh giá sự đánh đổi giữa hiệu suất và chi phí tính toán.
+        </p>
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.f1_comparison %}
+        <div class="image-container">
+            <h3>So sánh F1 Macro</h3>
+            <img src="{{ data.images.f1_comparison }}" alt="F1 Comparison">
+            <p class="image-caption">So sánh F1 Macro giữa baseline và các phương pháp nâng cao</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.f1_heatmap %}
+        <div class="image-container">
+            <h3>Heatmap hiệu suất</h3>
+            <img src="{{ data.images.f1_heatmap }}" alt="F1 Heatmap">
+            <p class="image-caption">Heatmap thể hiện hiệu suất các phương pháp</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.performance_vs_cost %}
+        <div class="image-container">
+            <h3>Hiệu suất vs Chi phí</h3>
+            <img src="{{ data.images.performance_vs_cost }}" alt="Performance vs Cost">
+            <p class="image-caption">Đánh đổi giữa hiệu suất và chi phí tính toán</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.improvement_percentage %}
+        <div class="image-container">
+            <h3>Tỷ lệ cải thiện</h3>
+            <img src="{{ data.images.improvement_percentage }}" alt="Improvement Percentage">
+            <p class="image-caption">Phần trăm cải thiện so với baseline</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin: 3em 0;">
+        <h3>Các phương pháp Baseline</h3>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h4>Majority Class</h4>
+                <p>Luôn dự đoán lớp phổ biến nhất (baseline đơn giản nhất)</p>
+            </div>
+            <div class="metric-card">
+                <h4>Random Classifier</h4>
+                <p>Dự đoán ngẫu nhiên theo phân bố lớp trong training set</p>
+            </div>
+            <div class="metric-card">
+                <h4>Logistic Regression</h4>
+                <p>Mô hình tuyến tính đơn giản nhưng hiệu quả</p>
+            </div>
+            <div class="metric-card">
+                <h4>Decision Tree</h4>
+                <p>Cây quyết định đơn giản, dễ hiểu và giải thích</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết quả so sánh</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Ensemble methods (XGBoost, LightGBM) cho hiệu suất tốt nhất</li>
+            <li>Semi-supervised Learning cải thiện đáng kể so với supervised baseline</li>
+            <li>Random Forest cung cấp sự cân bằng tốt giữa hiệu suất và tốc độ</li>
+            <li>Logistic Regression vẫn là lựa chọn tốt khi cần tốc độ cao</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF9A1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Khuyến nghị</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li><strong>Cho Production</strong>: LightGBM hoặc Random Forest (cân bằng tốt)</li>
+            <li><strong>Cho Research</strong>: XGBoost hoặc Deep Learning (hiệu suất cao nhất)</li>
+            <li><strong>Cho Prototype</strong>: Logistic Regression (nhanh và đơn giản)</li>
+            <li><strong>Cho Data Limited</strong>: Semi-supervised methods (khi ít dữ liệu có nhãn)</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FFF2A; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Tổng kết dự án</h3>
+        <p style="line-height: 1.8; font-size: 1.05em;">
+            Dự án AirGuard đã thành công trong việc xây dựng hệ thống giám sát và dự báo chất lượng không khí 
+            sử dụng Machine Learning. Kết quả cho thấy Semi-supervised Learning là hướng đi hiệu quả khi dữ liệu 
+            có nhãn hạn chế, và việc kết hợp nhiều phương pháp khác nhau giúp đạt được hiệu suất tốt nhất 
+            cho từng trường hợp cụ thể.
+        </p>
+    </div>
+</div>
+{% endblock %}

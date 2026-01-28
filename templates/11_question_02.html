@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Câu hỏi 02 - AirGuard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>11. Câu hỏi 02</h2>
+    
+    <div style="margin: 2em 0;">
+        <h3>Đề bài</h3>
+        <p style="font-size: 1.05em; line-height: 1.8; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FD2FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            Phân tích ảnh hưởng của các tham số trong Co-training đến hiệu suất mô hình.
+        </p>
+    </div>
+
+    <div class="image-grid">
+        {% if data.images.co_training_default %}
+        <div class="image-container">
+            <h3>Co-training với tham số mặc định</h3>
+            <img src="{{ data.images.co_training_default }}" alt="Co-training Default">
+            <p class="image-caption">Kết quả Co-training với cấu hình mặc định</p>
+        </div>
+        {% endif %}
+
+        {% if data.images.co_training_line %}
+        <div class="image-container">
+            <h3>Biểu đồ đường Co-training</h3>
+            <img src="{{ data.images.co_training_line }}" alt="Co-training Line Chart">
+            <p class="image-caption">So sánh hiệu suất với các tham số khác nhau</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Các tham số quan trọng</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li><strong>Confidence Threshold</strong>: Ngưỡng tin cậy để chọn dữ liệu unlabeled</li>
+            <li><strong>Number of Iterations</strong>: Số vòng lặp Co-training</li>
+            <li><strong>Growth Size</strong>: Số mẫu được thêm vào mỗi vòng lặp</li>
+            <li><strong>Feature Split</strong>: Cách chia tập đặc trưng cho hai mô hình</li>
+        </ul>
+    </div>
+
+    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF9A1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Kết luận</h3>
+        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
+            <li>Ngưỡng tin cậy cao (0.9-0.95) thường cho kết quả tốt hơn</li>
+            <li>Số vòng lặp tối ưu thường từ 5-10 vòng</li>
+            <li>Growth size nhỏ giúp mô hình ổn định hơn</li>
+            <li>Cách chia đặc trưng ảnh hưởng lớn đến hiệu suất</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
