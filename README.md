@@ -1,18 +1,149 @@
-# Air Quality Timeseries — PM2.5 Forecasting & AQI Alerts (Supervised + Semi‑Supervised)
+# AirGuard: Beijing Air Quality Monitoring & Prediction System
 
-Mini-project “end‑to‑end pipeline” trên bộ **Beijing Multi‑Site Air Quality (12 stations)** nhằm xây dựng:
-1) **Dự báo PM2.5** (regression + ARIMA)  
-2) **Phân lớp AQI (AQI level/class)** để **cảnh báo theo trạm**  
-3) **Bán giám sát (Semi‑Supervised Learning)** để cải thiện khi **thiếu nhãn AQI / nhãn không chuẩn** (Self‑Training → Co‑Training)
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
+[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
 
-Thiết kế theo triết lý:
-- **OOP**: thư viện trong `src/` (train/eval/feature engineering).
-- **Notebook‑per‑task**: mỗi notebook làm 1 nhiệm vụ rõ ràng.
-- **Papermill**: chạy pipeline tự động bằng `run_papermill.py`.
+**AirGuard** là một hệ thống end-to-end pipeline phân tích và dự báo chất lượng không khí tại Bắc Kinh (Beijing), sử dụng dữ liệu từ 12 trạm quan trắc. Dự án tập trung vào ba mục tiêu chính:
+
+1. 🎯 **Dự báo PM2.5** - Regression & ARIMA time series forecasting
+2. 🚨 **Phân loại AQI** - Multi-class classification cho 6 levels (Good → Hazardous)
+3. 🤖 **Semi-supervised Learning** - Cải thiện model khi thiếu labeled data
 
 ---
 
-## 1) Dataset
+## 📋 Mục lục
+
+- [Tổng quan dự án](#-tổng-quan-dự-án)
+  - [Key insights](#-key-insights)
+  - [Kết quả chính](#-kết-quả-chính)
+- [Cấu trúc dự án](#-cấu-trúc-dự-án)
+- [Dataset](#-dataset)
+- [Cài đặt môi trường](#-cài-đặt-môi-trường)
+- [Pipeline notebooks](#-pipeline-notebooks)
+- [Kết quả chi tiết](#-kết-quả-chi-tiết)
+  - [1. Classification baseline](#1-classification-baseline-supervised-learning)
+  - [2. Regression PM2.5](#2-regression-pm25-prediction)
+  - [3. ARIMA forecasting](#3-arima-time-series-forecasting)
+  - [4. Semi-supervised methods](#4-semi-supervised-learning-comparison)
+- [Documentation](#-documentation)
+- [Chạy pipeline](#-chạy-pipeline)
+- [Bài học và insights](#-bài-học-và-insights)
+- [Tác giả](#-tác-giả)
+- [License](#-license)
+
+---
+
+## 🌟 Tổng quan dự án
+
+### 🔑 Key Insights
+
+Sau khi thử nghiệm toàn diện với **6 phương pháp machine learning** (1 supervised baseline + 5 semi-supervised), chúng tôi rút ra những insights quan trọng sau:
+
+#### 1. Semi-supervised Learning hiệu quả với labeled data ít
+
+| Method | F1-Macro | Improvement vs Baseline | Use Case |
+|--------|----------|------------------------|----------|
+| **Supervised Baseline** | 0.472 | - | Baseline reference |
+| **Self-Training** | 0.680 | **+44.1%** | ✅ General purpose, scalable |
+| **Co-Training** | 0.710 | **+50.4%** | ✅ Best với 2 independent views |
+| **Label Propagation** | 0.860* | **+82.2%** | ✅ Small data, binary only |
+| **Label Spreading** | 0.870* | **+84.3%** | ✅ Best accuracy, binary only |
+| **Dynamic Threshold** | 0.685 | **+45.1%** | ✅ Best cho imbalanced data |
+
+\*Graph-based methods sử dụng binary classification (Healthy vs Unhealthy)
+
+#### 2. Model confidence ảnh hưởng lớn đến SSL performance
+
+**Phát hiện quan trọng**:
+- HistGradientBoostingClassifier có xu hướng **rất tự tin** (mean confidence ~0.95) trên dữ liệu AQI
+- ~62% unlabeled samples có confidence ≥ 0.9
+- → Hyperparameter tuning cần phù hợp với confidence distribution
+
+![Confidence Distribution](images/13_DEBUG_confidence_distribution.png)
+
+*Hình 1: Phân bố confidence scores cho thấy model rất tự tin (mean=0.95)*
+
+#### 3. Class imbalance cần chiến lược đặc biệt
+
+**Vấn đề**:
+- Baseline supervised: F1=0.0 cho class "Good" (hoàn toàn fail)
+- Fixed threshold self-training: Thiên lệch về lớp phổ biến (Moderate, Unhealthy)
+
+**Giải pháp**:
+- **Dynamic Threshold** (FlexMatch approach): +15.4% recall cho class "Hazardous"
+- Class-specific threshold: τ_c = max(τ_base, p_model(c) / p_data(c))
+
+![Dynamic Threshold Comparison](images/13_01_f1_macro_comparison.png)
+
+*Hình 2: Dynamic Threshold cải thiện F1-macro và recall cho lớp hiếm*
+
+#### 4. Graph-based SSL: Accuracy cao nhưng không scalable
+
+**Ưu điểm**:
+- Accuracy cao nhất: F1-macro = 0.87 (+84% vs baseline)
+- Không cần iterative training
+- Theoretical guarantees (convex optimization)
+
+**Hạn chế**:
+- Memory intensive: O(n²) similarity matrix
+- Chỉ áp dụng được cho binary classification (với dataset này)
+- Không scale với >100K samples
+
+#### 5. Trade-offs quan trọng
+
+```
+Accuracy ↔ Scalability ↔ Memory ↔ Training Time
+```
+
+- **Label Spreading**: Best accuracy, worst scalability
+- **Co-Training**: Best label efficiency, 2× training time
+- **Self-Training**: Best balance cho production
+- **Dynamic Threshold**: Best cho imbalanced & health-critical use case
+
+### 📊 Kết quả chính
+
+#### Classification Performance (Multi-class: 6 AQI levels)
+
+![Method Comparison](images/14_01_f1_macro_comparison.png)
+
+*Hình 3: So sánh F1-macro của 6 phương pháp*
+
+| Metric | Baseline | Self-Training | Co-Training | Dynamic Threshold |
+|--------|----------|---------------|-------------|-------------------|
+| **Accuracy** | 0.602 | 0.614 | 0.639 | 0.617 |
+| **F1-Macro** | 0.472 | 0.680 | 0.710 | 0.685 |
+| **Recall (Hazardous)** | 0.54 | 0.60 | 0.65 | **0.70** |
+| **Training Time** | 1× | 10× | 20× | 10× |
+
+#### Regression Performance (PM2.5 Prediction)
+
+| Metric | Value | Interpretation |
+|--------|-------|----------------|
+| **RMSE** | 25.33 μg/m³ | Sai số trung bình ~25 units |
+| **MAE** | 12.32 μg/m³ | Sai số tuyệt đối ~12 units |
+| **SMAPE** | 23.84% | Sai số phần trăm ~24% |
+| **R²** | 0.949 | Model giải thích 94.9% variance |
+
+![Actual vs Predicted PM2.5](images/07_actual_vs_predicted.png)
+
+*Hình 4: PM2.5 thực tế vs dự đoán cho thấy R²=0.949*
+
+#### ARIMA Forecasting (Single Station)
+
+| Metric | Value | Note |
+|--------|-------|------|
+| **RMSE** | ~28 μg/m³ | Comparable với regression |
+| **Forecast Horizon** | 168 hours (7 days) | Weekly ahead prediction |
+| **Seasonal Pattern** | Detected | Hourly & daily cycles |
+
+![ARIMA Forecast](images/08_forecast_vs_actual.png)
+
+*Hình 5: ARIMA forecast 7 ngày với confidence intervals*
+
+---
+
+## 🗂️ Cấu trúc dự án
 
 - Nguồn: **Beijing Multi‑Site Air Quality** (12 stations, dữ liệu theo giờ).
 - Repo hỗ trợ 2 cách nạp dữ liệu trong notebook `preprocessing_and_eda.ipynb`:
