@@ -1,0 +1,6 @@
+datetime,station,y_true,y_pred
+2017-01-01 00:00:00,Aotizhongxin,Hazardous,Hazardous
+2017-01-01 01:00:00,Aotizhongxin,Hazardous,Hazardous
+2017-01-01 02:00:00,Aotizhongxin,Hazardous,Hazardous
+2017-01-01 03:00:00,Aotizhongxin,Hazardous,Hazardous
+2017-01-01 04:00:00,Aotizhongxin,Hazardous,Hazardous
