@@ -1,0 +1,679 @@
+{
+  "method": "self_training",
+  "data_cfg": {
+    "target_col": "aqi_class",
+    "cutoff": "2017-01-01",
+    "random_state": 42,
+    "leakage_cols": [
+      "PM2.5",
+      "pm25_24h",
+      "datetime"
+    ]
+  },
+  "st_cfg": {
+    "tau": 0.7,
+    "max_iter": 40,
+    "min_new_per_iter": 20,
+    "val_frac": 0.1
+  },
+  "history": [
+    {
+      "iter": 1,
+      "val_accuracy": 0.7344775365976779,
+      "val_f1_macro": 0.699292880861926,
+      "unlabeled_pool": 383962,
+      "new_pseudo": 241980,
+      "tau": 0.7
+    },
+    {
+      "iter": 2,
+      "val_accuracy": 0.729429581019687,
+      "val_f1_macro": 0.7072924166285142,
+      "unlabeled_pool": 141982,
+      "new_pseudo": 97334,
+      "tau": 0.7
+    },
+    {
+      "iter": 3,
+      "val_accuracy": 0.723372034326098,
+      "val_f1_macro": 0.7018222240468878,
+      "unlabeled_pool": 44648,
+      "new_pseudo": 17752,
+      "tau": 0.7
+    },
+    {
+      "iter": 4,
+      "val_accuracy": 0.7031802120141343,
+      "val_f1_macro": 0.6839785574200222,
+      "unlabeled_pool": 26896,
+      "new_pseudo": 5399,
+      "tau": 0.7
+    },
+    {
+      "iter": 5,
+      "val_accuracy": 0.7188288743059061,
+      "val_f1_macro": 0.6910029763732575,
+      "unlabeled_pool": 21497,
+      "new_pseudo": 3226,
+      "tau": 0.7
+    },
+    {
+      "iter": 6,
+      "val_accuracy": 0.6966178697627461,
+      "val_f1_macro": 0.6688005924695407,
+      "unlabeled_pool": 18271,
+      "new_pseudo": 1525,
+      "tau": 0.7
+    },
+    {
+      "iter": 7,
+      "val_accuracy": 0.685007571933367,
+      "val_f1_macro": 0.6443121202059688,
+      "unlabeled_pool": 16746,
+      "new_pseudo": 1728,
+      "tau": 0.7
+    },
+    {
+      "iter": 8,
+      "val_accuracy": 0.7057041898031298,
+      "val_f1_macro": 0.6779866593844809,
+      "unlabeled_pool": 15018,
+      "new_pseudo": 753,
+      "tau": 0.7
+    },
+    {
+      "iter": 9,
+      "val_accuracy": 0.7132761231701161,
+      "val_f1_macro": 0.6880997768823583,
+      "unlabeled_pool": 14265,
+      "new_pseudo": 1069,
+      "tau": 0.7
+    },
+    {
+      "iter": 10,
+      "val_accuracy": 0.6890459363957597,
+      "val_f1_macro": 0.6577447209079645,
+      "unlabeled_pool": 13196,
+      "new_pseudo": 468,
+      "tau": 0.7
+    },
+    {
+      "iter": 11,
+      "val_accuracy": 0.7102473498233216,
+      "val_f1_macro": 0.6868923038326177,
+      "unlabeled_pool": 12728,
+      "new_pseudo": 700,
+      "tau": 0.7
+    },
+    {
+      "iter": 12,
+      "val_accuracy": 0.6839979808177689,
+      "val_f1_macro": 0.6471510910926269,
+      "unlabeled_pool": 12028,
+      "new_pseudo": 353,
+      "tau": 0.7
+    },
+    {
+      "iter": 13,
+      "val_accuracy": 0.685007571933367,
+      "val_f1_macro": 0.6516109920385013,
+      "unlabeled_pool": 11675,
+      "new_pseudo": 214,
+      "tau": 0.7
+    },
+    {
+      "iter": 14,
+      "val_accuracy": 0.6890459363957597,
+      "val_f1_macro": 0.6528040029589497,
+      "unlabeled_pool": 11461,
+      "new_pseudo": 224,
+      "tau": 0.7
+    },
+    {
+      "iter": 15,
+      "val_accuracy": 0.6930843008581524,
+      "val_f1_macro": 0.6596395390780299,
+      "unlabeled_pool": 11237,
+      "new_pseudo": 252,
+      "tau": 0.7
+    },
+    {
+      "iter": 16,
+      "val_accuracy": 0.6910651186269561,
+      "val_f1_macro": 0.6676315562636931,
+      "unlabeled_pool": 10985,
+      "new_pseudo": 184,
+      "tau": 0.7
+    },
+    {
+      "iter": 17,
+      "val_accuracy": 0.6870267541645634,
+      "val_f1_macro": 0.6512357200976301,
+      "unlabeled_pool": 10801,
+      "new_pseudo": 214,
+      "tau": 0.7
+    },
+    {
+      "iter": 18,
+      "val_accuracy": 0.690560323069157,
+      "val_f1_macro": 0.6573819658066048,
+      "unlabeled_pool": 10587,
+      "new_pseudo": 148,
+      "tau": 0.7
+    },
+    {
+      "iter": 19,
+      "val_accuracy": 0.6935890964159516,
+      "val_f1_macro": 0.6557420792696969,
+      "unlabeled_pool": 10439,
+      "new_pseudo": 127,
+      "tau": 0.7
+    },
+    {
+      "iter": 20,
+      "val_accuracy": 0.6824835941443715,
+      "val_f1_macro": 0.6450335228653276,
+      "unlabeled_pool": 10312,
+      "new_pseudo": 139,
+      "tau": 0.7
+    },
+    {
+      "iter": 21,
+      "val_accuracy": 0.6819787985865724,
+      "val_f1_macro": 0.6441745266150761,
+      "unlabeled_pool": 10173,
+      "new_pseudo": 101,
+      "tau": 0.7
+    },
+    {
+      "iter": 22,
+      "val_accuracy": 0.679454820797577,
+      "val_f1_macro": 0.6381364195476653,
+      "unlabeled_pool": 10072,
+      "new_pseudo": 122,
+      "tau": 0.7
+    },
+    {
+      "iter": 23,
+      "val_accuracy": 0.679959616355376,
+      "val_f1_macro": 0.6361482051594152,
+      "unlabeled_pool": 9950,
+      "new_pseudo": 159,
+      "tau": 0.7
+    },
+    {
+      "iter": 24,
+      "val_accuracy": 0.6910651186269561,
+      "val_f1_macro": 0.655477153566323,
+      "unlabeled_pool": 9791,
+      "new_pseudo": 141,
+      "tau": 0.7
+    },
+    {
+      "iter": 25,
+      "val_accuracy": 0.6839979808177689,
+      "val_f1_macro": 0.6476396819239055,
+      "unlabeled_pool": 9650,
+      "new_pseudo": 87,
+      "tau": 0.7
+    },
+    {
+      "iter": 26,
+      "val_accuracy": 0.6865219586067642,
+      "val_f1_macro": 0.6545473485019456,
+      "unlabeled_pool": 9563,
+      "new_pseudo": 60,
+      "tau": 0.7
+    },
+    {
+      "iter": 27,
+      "val_accuracy": 0.6839979808177689,
+      "val_f1_macro": 0.6485081365459945,
+      "unlabeled_pool": 9503,
+      "new_pseudo": 84,
+      "tau": 0.7
+    },
+    {
+      "iter": 28,
+      "val_accuracy": 0.6915699141847552,
+      "val_f1_macro": 0.6570298883934537,
+      "unlabeled_pool": 9419,
+      "new_pseudo": 78,
+      "tau": 0.7
+    },
+    {
+      "iter": 29,
+      "val_accuracy": 0.6824835941443715,
+      "val_f1_macro": 0.6454317375162891,
+      "unlabeled_pool": 9341,
+      "new_pseudo": 74,
+      "tau": 0.7
+    },
+    {
+      "iter": 30,
+      "val_accuracy": 0.6769308430085815,
+      "val_f1_macro": 0.637749757071382,
+      "unlabeled_pool": 9267,
+      "new_pseudo": 75,
+      "tau": 0.7
+    },
+    {
+      "iter": 31,
+      "val_accuracy": 0.6860171630489652,
+      "val_f1_macro": 0.6489069534057572,
+      "unlabeled_pool": 9192,
+      "new_pseudo": 53,
+      "tau": 0.7
+    },
+    {
+      "iter": 32,
+      "val_accuracy": 0.6819787985865724,
+      "val_f1_macro": 0.6444793208993609,
+      "unlabeled_pool": 9139,
+      "new_pseudo": 55,
+      "tau": 0.7
+    },
+    {
+      "iter": 33,
+      "val_accuracy": 0.6865219586067642,
+      "val_f1_macro": 0.6550170118484423,
+      "unlabeled_pool": 9084,
+      "new_pseudo": 83,
+      "tau": 0.7
+    },
+    {
+      "iter": 34,
+      "val_accuracy": 0.6779404341241797,
+      "val_f1_macro": 0.6345089146490327,
+      "unlabeled_pool": 9001,
+      "new_pseudo": 53,
+      "tau": 0.7
+    },
+    {
+      "iter": 35,
+      "val_accuracy": 0.685007571933367,
+      "val_f1_macro": 0.6500818399002172,
+      "unlabeled_pool": 8948,
+      "new_pseudo": 57,
+      "tau": 0.7
+    },
+    {
+      "iter": 36,
+      "val_accuracy": 0.6895507319535588,
+      "val_f1_macro": 0.649365968858793,
+      "unlabeled_pool": 8891,
+      "new_pseudo": 69,
+      "tau": 0.7
+    },
+    {
+      "iter": 37,
+      "val_accuracy": 0.6945986875315497,
+      "val_f1_macro": 0.6643700005744525,
+      "unlabeled_pool": 8822,
+      "new_pseudo": 72,
+      "tau": 0.7
+    },
+    {
+      "iter": 38,
+      "val_accuracy": 0.6824835941443715,
+      "val_f1_macro": 0.6433074574341459,
+      "unlabeled_pool": 8750,
+      "new_pseudo": 44,
+      "tau": 0.7
+    },
+    {
+      "iter": 39,
+      "val_accuracy": 0.6951034830893488,
+      "val_f1_macro": 0.6610647480501458,
+      "unlabeled_pool": 8706,
+      "new_pseudo": 47,
+      "tau": 0.7
+    },
+    {
+      "iter": 40,
+      "val_accuracy": 0.6814740030287734,
+      "val_f1_macro": 0.6447931037132268,
+      "unlabeled_pool": 8659,
+      "new_pseudo": 55,
+      "tau": 0.7
+    }
+  ],
+  "test_metrics": {
+    "cutoff": "2017-01-01 00:00:00",
+    "n_train": 0,
+    "n_test": 16671,
+    "accuracy": 0.6002039469737868,
+    "f1_macro": 0.5005745645943991,
+    "report": {
+      "Good": {
+        "precision": 0.6375,
+        "recall": 0.14825581395348839,
+        "f1-score": 0.24056603773584906,
+        "support": 1032.0
+      },
+      "Hazardous": {
+        "precision": 0.801994301994302,
+        "recall": 0.6070080862533692,
+        "f1-score": 0.6910095121202823,
+        "support": 1855.0
+      },
+      "Moderate": {
+        "precision": 0.5891247052295742,
+        "recall": 0.8787502586385268,
+        "f1-score": 0.7053645573824946,
+        "support": 4833.0
+      },
+      "Unhealthy": {
+        "precision": 0.6057842046718577,
+        "recall": 0.6353243117125525,
+        "f1-score": 0.620202710397449,
+        "support": 4286.0
+      },
+      "Unhealthy_for_Sensitive_Groups": {
+        "precision": 0.40325497287522605,
+        "recall": 0.10295475530932595,
+        "f1-score": 0.16403089371092314,
+        "support": 2166.0
+      },
+      "Very_Unhealthy": {
+        "precision": 0.5537906137184115,
+        "recall": 0.6138455382152861,
+        "f1-score": 0.5822736762193965,
+        "support": 2499.0
+      },
+      "accuracy": 0.6002039469737868,
+      "macro avg": {
+        "precision": 0.5985747997482286,
+        "recall": 0.4976897940137581,
+        "f1-score": 0.5005745645943991,
+        "support": 16671.0
+      },
+      "weighted avg": {
+        "precision": 0.5906426277204484,
+        "recall": 0.6002039469737868,
+        "f1-score": 0.5643149991703985,
+        "support": 16671.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        153,
+        875,
+        1,
+        3,
+        0,
+        0
+      ],
+      [
+        52,
+        4247,
+        117,
+        367,
+        46,
+        4
+      ],
+      [
+        8,
+        1189,
+        223,
+        669,
+        76,
+        1
+      ],
+      [
+        14,
+        851,
+        193,
+        2723,
+        489,
+        16
+      ],
+      [
+        9,
+        44,
+        17,
+        638,
+        1534,
+        257
+      ],
+      [
+        4,
+        3,
+        2,
+        95,
+        625,
+        1126
+      ]
+    ],
+    "labels": [
+      "Good",
+      "Moderate",
+      "Unhealthy_for_Sensitive_Groups",
+      "Unhealthy",
+      "Very_Unhealthy",
+      "Hazardous"
+    ],
+    "feature_cols": [
+      "No",
+      "year",
+      "month",
+      "day",
+      "hour",
+      "PM10",
+      "SO2",
+      "NO2",
+      "CO",
+      "O3",
+      "TEMP",
+      "PRES",
+      "DEWP",
+      "RAIN",
+      "wd",
+      "WSPM",
+      "station",
+      "hour_sin",
+      "hour_cos",
+      "dow",
+      "is_weekend",
+      "PM10_lag1",
+      "SO2_lag1",
+      "NO2_lag1",
+      "CO_lag1",
+      "O3_lag1",
+      "TEMP_lag1",
+      "PRES_lag1",
+      "DEWP_lag1",
+      "RAIN_lag1",
+      "WSPM_lag1",
+      "PM10_lag3",
+      "SO2_lag3",
+      "NO2_lag3",
+      "CO_lag3",
+      "O3_lag3",
+      "TEMP_lag3",
+      "PRES_lag3",
+      "DEWP_lag3",
+      "RAIN_lag3",
+      "WSPM_lag3",
+      "PM10_lag24",
+      "SO2_lag24",
+      "NO2_lag24",
+      "CO_lag24",
+      "O3_lag24",
+      "TEMP_lag24",
+      "PRES_lag24",
+      "DEWP_lag24",
+      "RAIN_lag24",
+      "WSPM_lag24",
+      "is_labeled"
+    ],
+    "categorical_cols": [
+      "wd",
+      "station"
+    ],
+    "numeric_cols": [
+      "No",
+      "year",
+      "month",
+      "day",
+      "hour",
+      "PM10",
+      "SO2",
+      "NO2",
+      "CO",
+      "O3",
+      "TEMP",
+      "PRES",
+      "DEWP",
+      "RAIN",
+      "WSPM",
+      "hour_sin",
+      "hour_cos",
+      "dow",
+      "is_weekend",
+      "PM10_lag1",
+      "SO2_lag1",
+      "NO2_lag1",
+      "CO_lag1",
+      "O3_lag1",
+      "TEMP_lag1",
+      "PRES_lag1",
+      "DEWP_lag1",
+      "RAIN_lag1",
+      "WSPM_lag1",
+      "PM10_lag3",
+      "SO2_lag3",
+      "NO2_lag3",
+      "CO_lag3",
+      "O3_lag3",
+      "TEMP_lag3",
+      "PRES_lag3",
+      "DEWP_lag3",
+      "RAIN_lag3",
+      "WSPM_lag3",
+      "PM10_lag24",
+      "SO2_lag24",
+      "NO2_lag24",
+      "CO_lag24",
+      "O3_lag24",
+      "TEMP_lag24",
+      "PRES_lag24",
+      "DEWP_lag24",
+      "RAIN_lag24",
+      "WSPM_lag24",
+      "is_labeled"
+    ]
+  },
+  "model_info": {
+    "feature_cols": [
+      "No",
+      "year",
+      "month",
+      "day",
+      "hour",
+      "PM10",
+      "SO2",
+      "NO2",
+      "CO",
+      "O3",
+      "TEMP",
+      "PRES",
+      "DEWP",
+      "RAIN",
+      "wd",
+      "WSPM",
+      "station",
+      "hour_sin",
+      "hour_cos",
+      "dow",
+      "is_weekend",
+      "PM10_lag1",
+      "SO2_lag1",
+      "NO2_lag1",
+      "CO_lag1",
+      "O3_lag1",
+      "TEMP_lag1",
+      "PRES_lag1",
+      "DEWP_lag1",
+      "RAIN_lag1",
+      "WSPM_lag1",
+      "PM10_lag3",
+      "SO2_lag3",
+      "NO2_lag3",
+      "CO_lag3",
+      "O3_lag3",
+      "TEMP_lag3",
+      "PRES_lag3",
+      "DEWP_lag3",
+      "RAIN_lag3",
+      "WSPM_lag3",
+      "PM10_lag24",
+      "SO2_lag24",
+      "NO2_lag24",
+      "CO_lag24",
+      "O3_lag24",
+      "TEMP_lag24",
+      "PRES_lag24",
+      "DEWP_lag24",
+      "RAIN_lag24",
+      "WSPM_lag24",
+      "is_labeled"
+    ],
+    "numeric_cols": [
+      "No",
+      "year",
+      "month",
+      "day",
+      "hour",
+      "PM10",
+      "SO2",
+      "NO2",
+      "CO",
+      "O3",
+      "TEMP",
+      "PRES",
+      "DEWP",
+      "RAIN",
+      "WSPM",
+      "hour_sin",
+      "hour_cos",
+      "dow",
+      "is_weekend",
+      "PM10_lag1",
+      "SO2_lag1",
+      "NO2_lag1",
+      "CO_lag1",
+      "O3_lag1",
+      "TEMP_lag1",
+      "PRES_lag1",
+      "DEWP_lag1",
+      "RAIN_lag1",
+      "WSPM_lag1",
+      "PM10_lag3",
+      "SO2_lag3",
+      "NO2_lag3",
+      "CO_lag3",
+      "O3_lag3",
+      "TEMP_lag3",
+      "PRES_lag3",
+      "DEWP_lag3",
+      "RAIN_lag3",
+      "WSPM_lag3",
+      "PM10_lag24",
+      "SO2_lag24",
+      "NO2_lag24",
+      "CO_lag24",
+      "O3_lag24",
+      "TEMP_lag24",
+      "PRES_lag24",
+      "DEWP_lag24",
+      "RAIN_lag24",
+      "WSPM_lag24",
+      "is_labeled"
+    ],
+    "categorical_cols": [
+      "wd",
+      "station"
+    ]
+  }
+}

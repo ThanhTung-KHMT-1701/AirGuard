@@ -1,0 +1,324 @@
+{
+  "method": "co_training",
+  "data_cfg": {
+    "target_col": "aqi_class",
+    "cutoff": "2017-01-01",
+    "random_state": 42,
+    "leakage_cols": [
+      "PM2.5",
+      "pm25_24h",
+      "datetime"
+    ]
+  },
+  "ct_cfg": {
+    "tau": 0.8,
+    "max_iter": 2,
+    "max_new_per_iter": 250,
+    "min_new_per_iter": 20,
+    "val_frac": 0.2
+  },
+  "history": [
+    {
+      "iter": 1,
+      "val_accuracy": 0.704442200908632,
+      "val_f1_macro": 0.6404782071835752,
+      "unlabeled_pool": 383962,
+      "new_pseudo": 250,
+      "tau": 0.8
+    },
+    {
+      "iter": 2,
+      "val_accuracy": 0.6945986875315497,
+      "val_f1_macro": 0.6190122977595994,
+      "unlabeled_pool": 383712,
+      "new_pseudo": 250,
+      "tau": 0.8
+    }
+  ],
+  "test_metrics": {
+    "cutoff": "2017-01-01 00:00:00",
+    "n_train": 0,
+    "n_test": 16671,
+    "accuracy": 0.5695519165017096,
+    "f1_macro": 0.46110478993261755,
+    "report": {
+      "Good": {
+        "precision": 0.8035714285714286,
+        "recall": 0.0872093023255814,
+        "f1-score": 0.15734265734265734,
+        "support": 1032.0
+      },
+      "Hazardous": {
+        "precision": 0.8204309656823623,
+        "recall": 0.554177897574124,
+        "f1-score": 0.6615186615186616,
+        "support": 1855.0
+      },
+      "Moderate": {
+        "precision": 0.5920928773140884,
+        "recall": 0.7808814400993171,
+        "f1-score": 0.6735076291603462,
+        "support": 4833.0
+      },
+      "Unhealthy": {
+        "precision": 0.5037374065648359,
+        "recall": 0.7232851143257116,
+        "f1-score": 0.5938697318007663,
+        "support": 4286.0
+      },
+      "Unhealthy_for_Sensitive_Groups": {
+        "precision": 0.4595300261096606,
+        "recall": 0.08125577100646353,
+        "f1-score": 0.1380933699489996,
+        "support": 2166.0
+      },
+      "Very_Unhealthy": {
+        "precision": 0.554070981210856,
+        "recall": 0.5310124049619848,
+        "f1-score": 0.5422966898242746,
+        "support": 2499.0
+      },
+      "accuracy": 0.5695519165017096,
+      "macro avg": {
+        "precision": 0.6222389475755387,
+        "recall": 0.45963698838219713,
+        "f1-score": 0.46110478993261755,
+        "support": 16671.0
+      },
+      "weighted avg": {
+        "precision": 0.5849531506701354,
+        "recall": 0.5695519165017096,
+        "f1-score": 0.5305136133948277,
+        "support": 16671.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        90,
+        933,
+        1,
+        8,
+        0,
+        0
+      ],
+      [
+        21,
+        3774,
+        68,
+        961,
+        9,
+        0
+      ],
+      [
+        1,
+        985,
+        176,
+        975,
+        29,
+        0
+      ],
+      [
+        0,
+        667,
+        112,
+        3100,
+        406,
+        1
+      ],
+      [
+        0,
+        14,
+        20,
+        914,
+        1327,
+        224
+      ],
+      [
+        0,
+        1,
+        6,
+        196,
+        624,
+        1028
+      ]
+    ],
+    "labels": [
+      "Good",
+      "Moderate",
+      "Unhealthy_for_Sensitive_Groups",
+      "Unhealthy",
+      "Very_Unhealthy",
+      "Hazardous"
+    ],
+    "feature_cols": [
+      "No",
+      "year",
+      "hour",
+      "PM10",
+      "SO2",
+      "NO2",
+      "CO",
+      "O3",
+      "TEMP",
+      "WSPM",
+      "hour_sin",
+      "hour_cos",
+      "dow",
+      "is_weekend",
+      "PM10_lag1",
+      "SO2_lag1",
+      "CO_lag1",
+      "O3_lag1",
+      "TEMP_lag1",
+      "WSPM_lag1",
+      "PM10_lag3",
+      "SO2_lag3",
+      "NO2_lag3",
+      "CO_lag3",
+      "O3_lag3",
+      "WSPM_lag3",
+      "SO2_lag24",
+      "NO2_lag24",
+      "O3_lag24",
+      "TEMP_lag24",
+      "RAIN_lag24",
+      "wd",
+      "station",
+      "month",
+      "day",
+      "PRES",
+      "DEWP",
+      "RAIN",
+      "NO2_lag1",
+      "PRES_lag1",
+      "DEWP_lag1",
+      "RAIN_lag1",
+      "TEMP_lag3",
+      "PRES_lag3",
+      "DEWP_lag3",
+      "RAIN_lag3",
+      "PM10_lag24",
+      "CO_lag24",
+      "PRES_lag24",
+      "DEWP_lag24",
+      "WSPM_lag24"
+    ],
+    "categorical_cols": [],
+    "numeric_cols": []
+  },
+  "model_info": {
+    "view1_cols": [
+      "No",
+      "year",
+      "hour",
+      "PM10",
+      "SO2",
+      "NO2",
+      "CO",
+      "O3",
+      "TEMP",
+      "WSPM",
+      "hour_sin",
+      "hour_cos",
+      "dow",
+      "is_weekend",
+      "PM10_lag1",
+      "SO2_lag1",
+      "CO_lag1",
+      "O3_lag1",
+      "TEMP_lag1",
+      "WSPM_lag1",
+      "PM10_lag3",
+      "SO2_lag3",
+      "NO2_lag3",
+      "CO_lag3",
+      "O3_lag3",
+      "WSPM_lag3",
+      "SO2_lag24",
+      "NO2_lag24",
+      "O3_lag24",
+      "TEMP_lag24",
+      "RAIN_lag24",
+      "wd",
+      "station"
+    ],
+    "view2_cols": [
+      "month",
+      "day",
+      "PRES",
+      "DEWP",
+      "RAIN",
+      "NO2_lag1",
+      "PRES_lag1",
+      "DEWP_lag1",
+      "RAIN_lag1",
+      "TEMP_lag3",
+      "PRES_lag3",
+      "DEWP_lag3",
+      "RAIN_lag3",
+      "PM10_lag24",
+      "CO_lag24",
+      "PRES_lag24",
+      "DEWP_lag24",
+      "WSPM_lag24"
+    ],
+    "view1_numeric_cols": [
+      "No",
+      "year",
+      "hour",
+      "PM10",
+      "SO2",
+      "NO2",
+      "CO",
+      "O3",
+      "TEMP",
+      "WSPM",
+      "hour_sin",
+      "hour_cos",
+      "dow",
+      "is_weekend",
+      "PM10_lag1",
+      "SO2_lag1",
+      "CO_lag1",
+      "O3_lag1",
+      "TEMP_lag1",
+      "WSPM_lag1",
+      "PM10_lag3",
+      "SO2_lag3",
+      "NO2_lag3",
+      "CO_lag3",
+      "O3_lag3",
+      "WSPM_lag3",
+      "SO2_lag24",
+      "NO2_lag24",
+      "O3_lag24",
+      "TEMP_lag24",
+      "RAIN_lag24"
+    ],
+    "view1_categorical_cols": [
+      "wd",
+      "station"
+    ],
+    "view2_numeric_cols": [
+      "month",
+      "day",
+      "PRES",
+      "DEWP",
+      "RAIN",
+      "NO2_lag1",
+      "PRES_lag1",
+      "DEWP_lag1",
+      "RAIN_lag1",
+      "TEMP_lag3",
+      "PRES_lag3",
+      "DEWP_lag3",
+      "RAIN_lag3",
+      "PM10_lag24",
+      "CO_lag24",
+      "PRES_lag24",
+      "DEWP_lag24",
+      "WSPM_lag24"
+    ],
+    "view2_categorical_cols": []
+  }
+}
