@@ -30,9 +30,10 @@
     --info-yellow: #FFDA1F;
 }
 
-/* Smooth scrolling */
+/* Smooth scrolling and global font */
 html {
     scroll-behavior: smooth;
+    font-family: Arial, sans-serif;
 }
 
 /* Print styles */
@@ -49,5 +50,56 @@ html {
     img {
         max-width: 100%;
         page-break-inside: avoid;
+    }
+}
+
+/* Image styles to prevent overflow and maintain aspect ratio */
+.card-body img {
+    max-width: 100%; /* Ensure image is never wider than its container */
+    height: auto;    /* Maintain aspect ratio */
+    max-height: 80vh; /* Optional: Limit max height to 80% of viewport height */
+    object-fit: contain; /* Ensure the whole image is visible without distortion */
+}
+
+/* Table Styles for better layout and readability */
+.card-body table {
+    width: 100%; /* Make table take full width of its container */
+    max-width: 900px; /* Set a max-width for very wide screens */
+    margin: 1.5em auto; /* Center the table horizontally and add vertical space */
+    border-collapse: collapse; /* Clean, modern borders */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    font-size: 0.95em; /* Slightly smaller font for compactness */
+    border-radius: 8px;
+    overflow: hidden; /* Ensures the border-radius is applied to corners */
+}
+
+.card-body th, .card-body td {
+    padding: 0.8em 1em; /* Comfortable padding */
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd; /* Separator for rows */
+}
+
+.card-body th {
+    background-color: var(--primary-blue); /* Use the primary blue from the color scheme */
+    color: white; /* White text for header */
+    font-weight: bold;
+    text-transform: uppercase; /* Uppercase headers for emphasis */
+    letter-spacing: 0.05em;
+}
+
+.card-body tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra-striping for rows */
+}
+
+.card-body tr:hover {
+    background-color: #f1f1f1; /* Highlight on hover */
+}
+
+/* Make tables responsive on small screens */
+@media screen and (max-width: 768px) {
+    .card-body table {
+        display: block;
+        overflow-x: auto; /* Allow horizontal scrolling */
+        white-space: nowrap;
     }
 }

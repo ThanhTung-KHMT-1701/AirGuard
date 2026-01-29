@@ -1,106 +1,71 @@
-# 01 — Preprocessing & EDA (Beijing Multi-Site Air Quality)
+# Tài liệu: 01 - Tiền xử lý và Phân tích dữ liệu khám phá (EDA)
 
-## 🎯 Mục tiêu chính
+## 🎯 Mục tiêu
 
-Notebook này thực hiện các bước **tiền xử lý dữ liệu** và **phân tích khám phá dữ liệu (EDA)** cho bộ dữ liệu chất lượng không khí Beijing Multi-Site, bao gồm:
-
-1. **Tải dữ liệu** từ UCI Repository hoặc file ZIP local
-2. **Làm sạch dữ liệu** (xử lý missing values, chuẩn hóa)
-3. **Tạo nhãn phân lớp AQI** dựa trên PM2.5 trung bình 24h
-4. **Tạo đặc trưng thời gian** (hour, day, month, etc.)
-5. **Tạo đặc trưng lag** để phục vụ dự đoán chuỗi thời gian
+Notebook này là bước đầu tiên trong pipeline, thực hiện hai nhiệm vụ chính:
+1.  **Tiền xử lý dữ liệu**: Làm sạch bộ dữ liệu về chất lượng không khí tại Bắc Kinh, bao gồm việc hợp nhất dữ liệu từ 12 trạm, xử lý các giá trị bị thiếu và chuẩn hóa cấu trúc.
+2.  **Phân tích dữ liệu khám phá (EDA)**: Trích xuất các thông tin quan trọng từ dữ liệu thô thông qua các phương pháp thống kê và trực quan hóa, nhằm hiểu rõ hơn về đặc điểm của dữ liệu.
 
 ---
 
-## 📥 Đầu vào (Input)
+## 📊 Quy trình và Kết quả phân tích
 
-| Tham số | Giá trị mặc định | Mô tả |
-|---------|------------------|-------|
-| `USE_UCIMLREPO` | `False` | Nếu `True`: tải từ UCI Repository (cần internet). Nếu `False`: dùng file local |
-| `RAW_ZIP_PATH` | `data/raw/PRSA2017_Data_20130301-20170228.zip` | Đường dẫn file ZIP chứa dữ liệu thô |
-| `LAG_HOURS` | `[1, 3, 24]` | Danh sách các khoảng thời gian lag (giờ) để tạo features |
+### 1. Hợp nhất và làm sạch dữ liệu
 
-**Dữ liệu thô:** 12 file CSV từ 12 trạm quan trắc tại Beijing (2013-2017), bao gồm:
-- Aotizhongxin, Changping, Dingling, Dongsi, Guanyuan, Gucheng
-- Huairou, Nongzhanguan, Shunyi, Tiantan, Wanliu, Wanshouxigong
+- **Dữ liệu đầu vào**: 12 tệp CSV riêng lẻ, mỗi tệp tương ứng với một trạm quan trắc.
+- **Hành động**:
+    - Hợp nhất tất cả các tệp thành một DataFrame duy nhất.
+    - Chuyển đổi cột thời gian sang định dạng `datetime`.
+    - Phân tích tỷ lệ dữ liệu bị thiếu.
+- **Kết quả**:
+    - Tỷ lệ dữ liệu bị thiếu cao nhất tập trung ở các cột `PM2.5` (~10%) và `PM10`.
+    - Các cột khác có tỷ lệ thiếu thấp hơn đáng kể.
 
----
+![Heatmap dữ liệu thiếu](../images/01_missing_data_heatmap.png)
+*Hình 1: Biểu đồ nhiệt thể hiện tỷ lệ dữ liệu bị thiếu. Các vùng sáng hơn cho thấy tỷ lệ thiếu cao hơn.*
 
-## 📤 Đầu ra (Output)
+### 2. Xử lý giá trị thiếu (Imputation)
 
-| File | Mô tả |
-|------|-------|
-| `data/processed/01_cleaned.parquet` | **Dataset chính** đã làm sạch và có đầy đủ features |
-| `data/processed/01_raw_data_sample.csv` | Mẫu 100 dòng dữ liệu thô |
-| `data/processed/01_cleaned_data_sample.csv` | Mẫu 100 dòng dữ liệu đã làm sạch |
-| `data/processed/01_missing_rate.csv` | Tỷ lệ missing của từng cột |
-| `data/processed/01_class_distribution.csv` | Phân bố các lớp AQI |
-| `images/01_class_distribution.png` | Biểu đồ phân bố lớp AQI |
+- **Phương pháp**: Sử dụng phương pháp **nội suy tuyến tính theo thời gian (Time-based Linear Interpolation)** để điền vào các giá trị bị thiếu.
+- **Lý do lựa chọn**: Dữ liệu chất lượng không khí là dạng chuỗi thời gian, giá trị tại một thời điểm thường có liên quan mật thiết đến các giá trị liền kề. Nội suy tuyến tính giúp bảo toàn xu hướng tự nhiên của dữ liệu mà không làm sai lệch các đặc tính thống kê.
 
----
+### 3. Kỹ thuật đặc trưng (Feature Engineering)
 
-## 🔄 Quy trình xử lý
+- **Tạo nhãn AQI**:
+    - Tính toán giá trị **PM2.5 trung bình trượt 24 giờ**.
+    - Dựa trên giá trị trung bình này, gán nhãn phân loại chất lượng không khí (AQI) theo 6 cấp độ tiêu chuẩn của US EPA (Tốt, Trung bình, Không lành mạnh cho nhóm nhạy cảm, Không lành mạnh, Rất không lành mạnh, Nguy hiểm).
+- **Tạo đặc trưng thời gian**: Trích xuất các thông tin thời gian như giờ trong ngày, ngày trong tuần, tháng, năm để phát hiện các xu hướng theo mùa hoặc theo chu kỳ.
+- **Tạo đặc trưng trễ (Lag Features)**: Tạo ra các cột dữ liệu mới chứa giá trị `PM2.5` tại các thời điểm trước đó (ví dụ: 1 giờ trước, 3 giờ trước, 24 giờ trước). Các đặc trưng này rất quan trọng cho các mô hình dự báo chuỗi thời gian.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  1. Load Data                                                    │
-│     load_beijing_air_quality() → df_raw                         │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  2. Clean Data                                                   │
-│     clean_air_quality_df() → Xử lý missing, chuẩn hóa           │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  3. Create AQI Labels                                            │
-│     add_pm25_24h_and_label() → Tính PM2.5 24h mean → aqi_class  │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  4. Add Time Features                                            │
-│     add_time_features() → hour, day, month, weekday, etc.       │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  5. Add Lag Features                                             │
-│     add_lag_features() → PM2.5_lag_1h, lag_3h, lag_24h          │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  6. Save Output                                                  │
-│     → 01_cleaned.parquet                                        │
-└─────────────────────────────────────────────────────────────────┘
-```
+### 4. Phân tích phân phối lớp AQI
+
+- **Kết quả**: Phân tích biểu đồ phân phối cho thấy sự **mất cân bằng dữ liệu** nghiêm trọng.
+    - Các lớp `Moderate` và `Unhealthy for Sensitive Groups` chiếm phần lớn số lượng mẫu.
+    - Các lớp `Good` và `Hazardous` là các lớp thiểu số, xuất hiện rất ít.
+- **Hệ quả**: Sự mất cân bằng này là một thách thức lớn đối với các mô hình phân loại. Mô hình có thể sẽ dự đoán tốt các lớp đa số nhưng lại hoạt động kém hiệu quả trên các lớp thiểu số, vốn thường là các lớp quan trọng cần được cảnh báo (ví dụ: `Hazardous`).
+
+![Phân phối lớp AQI](../images/01_class_distribution.png)
+*Hình 2: Biểu đồ cột thể hiện sự phân bố không đồng đều của các mẫu trong mỗi lớp AQI.*
 
 ---
 
-## 📊 Cột dữ liệu chính
+## 💾 Kết quả đầu ra
 
-| Cột | Mô tả |
-|-----|-------|
-| `datetime` | Timestamp của quan trắc |
-| `station` | Tên trạm quan trắc |
-| `PM2.5` | Nồng độ PM2.5 (µg/m³) |
-| `pm25_24h` | PM2.5 trung bình 24 giờ gần nhất |
-| `aqi_class` | Nhãn phân lớp AQI (Good, Moderate, Unhealthy, etc.) |
-| `hour`, `day`, `month`, `weekday` | Đặc trưng thời gian |
-| `PM2.5_lag_1h`, `PM2.5_lag_3h`, `PM2.5_lag_24h` | Giá trị PM2.5 ở các thời điểm trước |
+| Tệp                                         | Mô tả                                                                   |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| `data/processed/01_cleaned.parquet`         | **Dataset chính**: Đã được làm sạch, xử lý giá trị thiếu và bổ sung các đặc trưng mới. |
+| `data/processed/01_missing_rate.csv`        | Bảng thống kê tỷ lệ phần trăm dữ liệu bị thiếu cho từng cột.             |
+| `data/processed/01_class_distribution.csv`  | Bảng thống kê số lượng mẫu cho từng lớp AQI.                             |
 
 ---
 
-## 🏷️ Tiêu chí phân loại chất lượng không khí (AQI Class)
+## 🔑 Kết luận và Bước tiếp theo
 
-Nhãn `aqi_class` được tính dựa trên **PM2.5 trung bình 24 giờ** (µg/m³) theo tiêu chuẩn US EPA:
-
-| Mức độ (AQI Class) | PM2.5 (µg/m³) | Ý nghĩa | Màu sắc |
-|--------------------|---------------|---------|---------|
-| **Good** | 0.0 – 9.0 | Chất lượng không khí tốt | 🟢 Xanh lá |
-| **Moderate** | 9.1 – 35.4 | Chất lượng không khí trung bình | 🟡 Vàng |
-| **Unhealthy_for_Sensitive_Groups** | 35.5 – 55.4 | Không tốt cho nhóm nhạy cảm (trẻ em, người già, người có bệnh hô hấp) | 🟠 Cam |
-| **Unhealthy** | 55.5 – 125.4 | Không tốt cho sức khỏe | 🔴 Đỏ |
-| **Very_Unhealthy** | 125.5 – 225.4 | Rất không tốt cho sức khỏe | 🟣 Tím |
-| **Hazardous** | > 225.4 | Nguy hại - Cảnh báo khẩn cấp | 🟤 Nâu đỏ |
+- Quá trình tiền xử lý đã tạo ra một bộ dữ liệu sạch và giàu thông tin, sẵn sàng cho các bước mô hình hóa.
+- Phân tích EDA đã chỉ ra thách thức chính là sự mất cân bằng dữ liệu, cần được giải quyết ở các giai đoạn tiếp theo, đặc biệt là trong các bài toán phân loại và học bán giám sát.
+| **Unhealthy**                      | 55.5 – 125.4  | Không tốt cho sức khỏe                                                | 🔴 Đỏ      |
+| **Very_Unhealthy**                 | 125.5 – 225.4 | Rất không tốt cho sức khỏe                                            | 🟣 Tím     |
+| **Hazardous**                      | > 225.4       | Nguy hại - Cảnh báo khẩn cấp                                          | 🟤 Nâu đỏ  |
 
 **Hình minh họa:**
 

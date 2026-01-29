@@ -1,103 +1,59 @@
-# 02 — Semi-supervised Dataset Preparation
+# Tài liệu: 02 - Chuẩn bị dữ liệu cho học bán giám sát
 
-## 🎯 Mục tiêu chính
+## 🎯 Mục tiêu
 
-Notebook này chuẩn bị bộ dữ liệu cho **Semi-supervised Learning** (Học bán giám sát), với 2 nhiệm vụ:
-
-1. **Giữ lại dữ liệu chưa có nhãn AQI** (`aqi_class = NaN`) để dùng cho các thuật toán self-training/co-training
-2. **Giả lập tình huống thiếu nhãn** trong tập TRAIN theo phương pháp time-aware (có ý thức về thời gian)
+Mục tiêu chính của notebook này là tạo ra một tập dữ liệu chuyên biệt để **thử nghiệm và đánh giá hiệu quả của các thuật toán học bán giám sát (Semi-supervised Learning)**.
 
 ---
 
-## 📥 Đầu vào (Input)
+## 🔑 Vấn đề cốt lõi: Sự khan hiếm của dữ liệu có nhãn
 
-| Tham số | Giá trị mặc định | Mô tả |
-|---------|------------------|-------|
-| `CLEANED_PATH` | `data/processed/01_cleaned.parquet` | File dữ liệu đã được làm sạch từ bước 01 |
-| `CUTOFF` | `2017-01-01` | Ngày phân chia TRAIN/TEST (trước cutoff = TRAIN, sau = TEST) |
-| `LABEL_MISSING_FRACTION` | `0.95` | **95% dữ liệu TRAIN bị ẩn nhãn**, chỉ 5% có nhãn |
-| `RANDOM_STATE` | `42` | Seed để tái tạo kết quả |
+Trong các kịch bản thực tế, việc thu thập dữ liệu (ví dụ: đo nồng độ PM2.5) thường diễn ra tự động và liên tục. Tuy nhiên, quá trình **gán nhãn** cho dữ liệu đó (ví dụ: phân loại mức độ AQI) lại đòi hỏi sự can thiệp của con người, tốn kém thời gian và chi phí. Kết quả là chúng ta thường có một lượng lớn dữ liệu **không có nhãn** và chỉ một phần nhỏ dữ liệu **có nhãn**.
+
+Học bán giám sát ra đời để giải quyết bài toán này, bằng cách tận dụng thông tin ẩn chứa trong lượng lớn dữ liệu không nhãn để cải thiện hiệu suất của mô hình.
 
 ---
 
-## 📤 Đầu ra (Output)
+## 📝 Quy trình chuẩn bị dữ liệu
 
-| File | Mô tả |
-|------|-------|
-| `data/processed/02_dataset_for_semi.parquet` | **Dataset chính** cho semi-supervised learning |
-| `data/processed/02_dataset_for_semi_sample.csv` | Mẫu 500 dòng đầu tiên (để xem nhanh) |
+Để mô phỏng kịch bản trên, chúng tôi thực hiện quy trình sau:
 
----
+### 1. Phân chia dữ liệu theo thời gian (Time-aware Split)
 
-## 🔄 Quy trình xử lý
+- Dữ liệu được chia thành hai tập:
+    - **Tập huấn luyện (TRAIN)**: Dữ liệu trước ngày `2017-01-01`.
+    - **Tập kiểm tra (TEST)**: Dữ liệu từ ngày `2017-01-01` trở đi.
+- **Lý do**: Cách chia này đảm bảo rằng mô hình được huấn luyện trên dữ liệu quá khứ và được đánh giá trên dữ liệu tương lai, phản ánh đúng quy trình triển khai trong thực tế.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  1. Load Cleaned Data                                            │
-│     pd.read_parquet(01_cleaned.parquet)                         │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  2. Configure Semi-supervised Settings                           │
-│     SemiDataConfig(cutoff, random_state)                        │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  3. Mask Labels (Time-aware)                                     │
-│     mask_labels_time_aware(df, cfg, missing_fraction=0.95)      │
-│     - TRAIN (before cutoff): Che 95% nhãn                       │
-│     - TEST (after cutoff): Giữ nguyên 100% nhãn                 │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  4. Add is_labeled Column                                        │
-│     is_labeled = True nếu có nhãn, False nếu bị che             │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  5. Save Output                                                  │
-│     → 02_dataset_for_semi.parquet                               │
-└─────────────────────────────────────────────────────────────────┘
-```
+### 2. Giả lập tình huống thiếu nhãn
+
+- **Hành động**: Trong **tập huấn luyện (TRAIN)**, chúng tôi tiến hành **che (mask) một cách ngẫu nhiên 95% nhãn** `aqi_class`.
+- **Kết quả**:
+    - **Tập TRAIN**: Chỉ còn lại 5% dữ liệu có nhãn. Đây là "dữ liệu vàng" mà mô hình có giám sát ban đầu (baseline) sẽ sử dụng. 95% còn lại sẽ là dữ liệu không nhãn để các thuật toán bán giám sát khai thác.
+    - **Tập TEST**: Giữ lại 100% nhãn. Tập này được dùng để đánh giá cuối cùng, so sánh hiệu quả giữa các mô hình một cách công bằng.
+
+### 3. Thêm cột `is_labeled`
+
+- Một cột boolean mới có tên `is_labeled` được thêm vào để dễ dàng phân biệt giữa dữ liệu có nhãn (`True`) và không có nhãn (`False`) trong quá trình huấn luyện.
 
 ---
 
-## 📊 Cột dữ liệu quan trọng được thêm
+## 💾 Kết quả đầu ra
 
-| Cột | Kiểu | Mô tả |
-|-----|------|-------|
-| `is_labeled` | `bool` | `True` nếu dòng có nhãn, `False` nếu nhãn bị che (masked) |
-
----
-
-## 📈 Thống kê kỳ vọng
-
-Với `LABEL_MISSING_FRACTION = 0.95`:
-
-| Tập dữ liệu | Tỷ lệ có nhãn | Mô tả |
-|-------------|---------------|-------|
-| **TRAIN** (before 2017-01-01) | ~5% | Chỉ 5% dữ liệu có nhãn để huấn luyện |
-| **TEST** (after 2017-01-01) | 100% | Toàn bộ dữ liệu test có nhãn để đánh giá |
+| Tệp                                           | Mô tả                                                                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `data/processed/02_dataset_for_semi.parquet`  | **Dataset chính**: Bộ dữ liệu hoàn chỉnh đã được phân chia và che nhãn, sẵn sàng cho các thí nghiệm học bán giám sát.                 |
+| `data/processed/02_dataset_for_semi_sample.csv` | Một tệp mẫu chứa 500 dòng đầu tiên của bộ dữ liệu trên, giúp người dùng có cái nhìn nhanh về cấu trúc dữ liệu mà không cần tải tệp lớn. |
 
 ---
 
-## 💡 Ý nghĩa trong dự án
+## 💡 Ý nghĩa và Bước tiếp theo
 
-Notebook này tạo điều kiện để thử nghiệm các thuật toán **Semi-supervised Learning**:
-
-### Tại sao cần giả lập thiếu nhãn?
-
-Trong thực tế, việc gán nhãn chất lượng không khí (AQI class) đòi hỏi:
-- Chuyên gia môi trường đánh giá
-- Chi phí và thời gian đáng kể
-
-Do đó, thường chỉ có **một phần nhỏ dữ liệu được gán nhãn**, phần còn lại không có nhãn.
-
-### Semi-supervised Learning giải quyết vấn đề gì?
-
-Các thuật toán semi-supervised sẽ:
-1. **Học từ 5% dữ liệu có nhãn** (labeled data)
-2. **Tận dụng 95% dữ liệu không nhãn** (unlabeled data) để cải thiện mô hình
+- Notebook này đã tạo ra một môi trường giả lập thực tế, cho phép chúng tôi đo lường chính xác **giá trị gia tăng** mà các phương pháp bán giám sát mang lại so với việc chỉ sử dụng một lượng nhỏ dữ liệu có nhãn.
+- Bộ dữ liệu này sẽ là đầu vào cốt lõi cho các notebook tiếp theo, bao gồm:
+    - **04_semi_self_training.ipynb**
+    - **05_semi_co_training.ipynb**
+    - **09_semi_supervised_report.ipynb**
 3. **Tự động gán nhãn** cho dữ liệu chưa có nhãn (pseudo-labeling)
 
 ---

@@ -1,83 +1,40 @@
 {% extends "base.html" %}
 
-{% block title %}Câu hỏi 04 - AirGuard{% endblock %}
+{% block title %}Phân tích Dynamic Threshold{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2>13. Câu hỏi 04</h2>
-    
-    <div style="margin: 2em 0;">
-        <h3>Đề bài</h3>
-        <p style="font-size: 1.05em; line-height: 1.8; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF9A1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            Phân tích hiệu suất của mô hình trên các lớp hiếm (rare classes) và đề xuất giải pháp cải thiện.
-        </p>
-    </div>
+    <h1 class="mt-4">Phân tích: Dynamic Threshold vs. Fixed Threshold</h1>
+    <p class="lead">
+        Thử nghiệm này so sánh hiệu quả giữa việc sử dụng ngưỡng tin cậy cố định (Fixed) và ngưỡng tin cậy động (Dynamic) trong Self-Training, một kỹ thuật được kỳ vọng sẽ cải thiện khả năng dự báo các lớp hiếm.
+    </p>
+    <hr>
 
-    <div class="image-grid">
-        {% if data.images.f1_comparison %}
-        <div class="image-container">
-            <h3>So sánh F1 Macro</h3>
-            <img src="{{ data.images.f1_comparison }}" alt="F1 Comparison">
-            <p class="image-caption">So sánh F1 score giữa các phương pháp</p>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Phân tích 1: So sánh F1-macro tổng thể</h3>
         </div>
-        {% endif %}
-
-        {% if data.images.f1_per_class %}
-        <div class="image-container">
-            <h3>F1 Score từng lớp</h3>
-            <img src="{{ data.images.f1_per_class }}" alt="F1 per Class">
-            <p class="image-caption">F1 score chi tiết cho từng lớp chất lượng không khí</p>
+        <div class="card-body text-center">
+            <p>Trái với giả thuyết ban đầu, kết quả thực tế cho thấy việc áp dụng Dynamic Threshold đã làm <strong>giảm</strong> hiệu suất F1-macro tổng thể so với việc sử dụng ngưỡng cố định.</p>
+            <img src="{{ url_for('serve_image', filename='13_01_f1_macro_comparison.png') }}" class="img-fluid" alt="So sánh F1-macro">
         </div>
-        {% endif %}
     </div>
 
-    <div class="image-grid">
-        {% if data.images.recall_rare %}
-        <div class="image-container">
-            <h3>Recall trên các lớp hiếm</h3>
-            <img src="{{ data.images.recall_rare }}" alt="Recall Rare Classes">
-            <p class="image-caption">Recall của các lớp hiếm (Very Unhealthy, Hazardous)</p>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Phân tích 2: Hiệu suất trên từng lớp</h3>
         </div>
-        {% endif %}
-
-        {% if data.images.confidence_dist %}
-        <div class="image-container">
-            <h3>Phân bố độ tin cậy</h3>
-            <img src="{{ data.images.confidence_dist }}" alt="Confidence Distribution">
-            <p class="image-caption">Phân bố độ tin cậy dự đoán cho các lớp</p>
+        <div class="card-body text-center">
+            <p>Phân tích sâu hơn trên từng lớp cũng cho thấy F1-score của hầu hết các lớp đều bị giảm khi áp dụng ngưỡng động. Điều này cho thấy việc hạ ngưỡng có thể đã đưa vào các nhãn giả kém chất lượng, gây nhiễu cho mô hình.</p>
+            <img src="{{ url_for('serve_image', filename='13_02_f1_per_class.png') }}" class="img-fluid" alt="F1-score theo từng lớp">
         </div>
-        {% endif %}
+        <div class="card-footer">
+            <h5><i class="fas fa-lightbulb"></i> Kết luận chính</h5>
+            <p>
+                Đối với bộ dữ liệu này, phương pháp Dynamic Threshold <strong>không mang lại hiệu quả</strong> như kỳ vọng. Chiến lược sử dụng ngưỡng cố định, dù đơn giản hơn, lại cho kết quả tổng thể tốt hơn.
+            </p>
+        </div>
     </div>
 
-    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF351F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <h3 style="margin-top: 0;">Thách thức với lớp hiếm</h3>
-        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
-            <li>Số lượng mẫu không cân bằng giữa các lớp</li>
-            <li>Mô hình thiên vị về lớp đa số</li>
-            <li>Khó học được đặc trưng của lớp hiếm</li>
-            <li>Metrics tổng thể có thể che giấu hiệu suất kém trên lớp hiếm</li>
-        </ul>
-    </div>
-
-    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FFF2A; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <h3 style="margin-top: 0;">Giải pháp đề xuất</h3>
-        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
-            <li><strong>SMOTE</strong>: Tạo mẫu tổng hợp cho lớp thiểu số</li>
-            <li><strong>Class Weights</strong>: Điều chỉnh trọng số lớp trong hàm loss</li>
-            <li><strong>Focal Loss</strong>: Tập trung vào các mẫu khó phân loại</li>
-            <li><strong>Ensemble Methods</strong>: Kết hợp nhiều mô hình với chiến lược khác nhau</li>
-            <li><strong>Cost-sensitive Learning</strong>: Gán chi phí cao hơn cho lỗi trên lớp hiếm</li>
-        </ul>
-    </div>
-
-    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <h3 style="margin-top: 0;">Kết luận</h3>
-        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
-            <li>Semi-supervised Learning giúp cải thiện hiệu suất trên lớp hiếm</li>
-            <li>Kết hợp nhiều kỹ thuật cân bằng dữ liệu mang lại kết quả tốt nhất</li>
-            <li>Cần theo dõi metrics cụ thể cho từng lớp, không chỉ accuracy tổng thể</li>
-            <li>F1-score và Recall quan trọng hơn Precision với lớp hiếm trong bài toán này</li>
-        </ul>
-    </div>
 </div>
 {% endblock %}

@@ -229,22 +229,24 @@ def question_01():
 # 11 - Câu hỏi 02
 @app.route('/question-02')
 def question_02():
-    """Trang câu hỏi 02"""
+    """Trang câu hỏi 02 - Phân tích sâu Co-Training"""
     data = {
         'images': {
-            'co_training_default': get_image_path('11_01_co_training_default.png'),
-            'co_training_line': get_image_path('11_02_co_training_line_chart.png')
+            'heatmap': get_image_path('11_heatmap_performance.png'),
+            'lineplot_tau': get_image_path('11_lineplot_tau_trend_faceted.png'),
+            'barchart_ranked': get_image_path('11_grouped_barchart_ranked.png'),
+            'boxplot': get_image_path('11_boxplot_distribution.png')
         }
     }
     return render_template('11_question_02.html', data=data)
 
-# 12 - Câu hỏi 03
+# 15 - Câu hỏi 05 (Sử dụng route và template của question 03 cũ)
 @app.route('/question-03')
 def question_03():
-    """Trang câu hỏi 03"""
+    """Trang câu hỏi 05 - Thử nghiệm TAU cho Co-Training"""
     data = {
         'images': {
-            'graph_based_comparison': get_image_path('12_01_graph_based_comparison.png')
+            'tau_sweep': get_image_path('15_cotraining_tau_sweep.png')
         }
     }
     return render_template('12_question_03.html', data=data)
@@ -252,27 +254,23 @@ def question_03():
 # 13 - Câu hỏi 04
 @app.route('/question-04')
 def question_04():
-    """Trang câu hỏi 04"""
+    """Trang câu hỏi 04 - Thử nghiệm Dynamic Threshold"""
     data = {
         'images': {
             'f1_comparison': get_image_path('13_01_f1_macro_comparison.png'),
             'f1_per_class': get_image_path('13_02_f1_per_class.png'),
-            'recall_rare': get_image_path('13_03_recall_rare_classes.png'),
-            'confidence_dist': get_image_path('13_DEBUG_confidence_distribution.png')
+            'recall_rare': get_image_path('13_03_recall_rare_classes.png')
         }
     }
     return render_template('13_question_04.html', data=data)
 
-# 14 - Baseline và So sánh
+# 16 - So sánh tổng thể (Sử dụng route và template của baseline-comparison cũ)
 @app.route('/baseline-comparison')
 def baseline_comparison():
-    """Trang so sánh baseline"""
+    """Trang so sánh tổng thể các phương pháp SSL"""
     data = {
         'images': {
-            'f1_comparison': get_image_path('14_01_f1_macro_comparison.png'),
-            'f1_heatmap': get_image_path('14_02_f1_heatmap.png'),
-            'performance_vs_cost': get_image_path('14_03_performance_vs_cost.png'),
-            'improvement_percentage': get_image_path('14_04_improvement_percentage.png')
+            'full_comparison': get_image_path('16_full_comparison.png')
         }
     }
     return render_template('14_baseline_comparison.html', data=data)

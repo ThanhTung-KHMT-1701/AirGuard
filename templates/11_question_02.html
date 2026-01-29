@@ -1,54 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}Câu hỏi 02 - AirGuard{% endblock %}
+{% block title %}Phân tích sâu Co-Training{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2>11. Câu hỏi 02</h2>
-    
-    <div style="margin: 2em 0;">
-        <h3>Đề bài</h3>
-        <p style="font-size: 1.05em; line-height: 1.8; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1FD2FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            Phân tích ảnh hưởng của các tham số trong Co-training đến hiệu suất mô hình.
-        </p>
-    </div>
+    <h1 class="mt-4">Phân tích: Thử nghiệm và cải tiến Co-Training</h1>
+    <p class="lead">
+        Co-Training ban đầu cho hiệu suất rất thấp (F1-macro = 0.4044). Notebook này ghi lại quá trình thử nghiệm sâu với nhiều chiến lược chia "View" và các tham số khác nhau để tìm ra cấu hình tốt nhất có thể.
+    </p>
+    <hr>
 
-    <div class="image-grid">
-        {% if data.images.co_training_default %}
-        <div class="image-container">
-            <h3>Co-training với tham số mặc định</h3>
-            <img src="{{ data.images.co_training_default }}" alt="Co-training Default">
-            <p class="image-caption">Kết quả Co-training với cấu hình mặc định</p>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Phân tích 1: Heatmap hiệu suất tổng thể</h3>
         </div>
-        {% endif %}
-
-        {% if data.images.co_training_line %}
-        <div class="image-container">
-            <h3>Biểu đồ đường Co-training</h3>
-            <img src="{{ data.images.co_training_line }}" alt="Co-training Line Chart">
-            <p class="image-caption">So sánh hiệu suất với các tham số khác nhau</p>
+        <div class="card-body text-center">
+            <p>Heatmap thể hiện F1-macro trên các tổ hợp `TAU` và `MAX_NEW_PER_ITER` cho từng chiến lược chia View. Kết quả cho thấy sự cải thiện đã đạt được so với con số 0.4044 ban đầu.</p>
+            <img src="{{ url_for('serve_image', filename='11_heatmap_performance.png') }}" class="img-fluid" alt="Heatmap hiệu suất Co-Training">
+            <div class="mt-3">
+                <h5><i class="fas fa-lightbulb"></i> Kết luận chính</h5>
+                <p>
+                    Dù có sự cải thiện, điểm F1-macro cao nhất đạt được (<strong>~0.4205</strong>) vẫn thấp hơn đáng kể so với Self-Training. Điều này cho thấy vấn đề cốt lõi của Co-Training trên bộ dữ liệu này nằm ở việc khó có thể tạo ra các "view" đủ độc lập và mạnh mẽ.
+                </p>
+            </div>
         </div>
-        {% endif %}
     </div>
 
-    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #1F62FF; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <h3 style="margin-top: 0;">Các tham số quan trọng</h3>
-        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
-            <li><strong>Confidence Threshold</strong>: Ngưỡng tin cậy để chọn dữ liệu unlabeled</li>
-            <li><strong>Number of Iterations</strong>: Số vòng lặp Co-training</li>
-            <li><strong>Growth Size</strong>: Số mẫu được thêm vào mỗi vòng lặp</li>
-            <li><strong>Feature Split</strong>: Cách chia tập đặc trưng cho hai mô hình</li>
-        </ul>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Phân tích 2: Xu hướng hiệu suất theo TAU</h3>
+        </div>
+        <div class="card-body text-center">
+            <p>Biểu đồ đường cho thấy F1-macro thay đổi như thế nào khi `TAU` thay đổi, với các đường riêng cho `MAX_NEW_PER_ITER` = 250 và 500.</p>
+            <img src="{{ url_for('serve_image', filename='11_lineplot_tau_trend_faceted.png') }}" class="img-fluid" alt="Xu hướng theo TAU">
+        </div>
     </div>
 
-    <div style="margin: 3em 0; padding: 2em; background-color: #f8f9fa; border-radius: 12px; border-left: 5px solid #FF9A1F; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <h3 style="margin-top: 0;">Kết luận</h3>
-        <ul style="line-height: 2; font-size: 1.05em; padding-left: 1.5em;">
-            <li>Ngưỡng tin cậy cao (0.9-0.95) thường cho kết quả tốt hơn</li>
-            <li>Số vòng lặp tối ưu thường từ 5-10 vòng</li>
-            <li>Growth size nhỏ giúp mô hình ổn định hơn</li>
-            <li>Cách chia đặc trưng ảnh hưởng lớn đến hiệu suất</li>
-        </ul>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Phân tích 3: Xếp hạng các cấu hình</h3>
+        </div>
+        <div class="card-body text-center">
+            <p>Biểu đồ cột xếp hạng tất cả các cấu hình đã thử nghiệm từ cao đến thấp, giúp xác định rõ ràng cấu hình nào cho kết quả tốt nhất.</p>
+            <img src="{{ url_for('serve_image', filename='11_grouped_barchart_ranked.png') }}" class="img-fluid" alt="Xếp hạng cấu hình">
+        </div>
     </div>
+
 </div>
 {% endblock %}

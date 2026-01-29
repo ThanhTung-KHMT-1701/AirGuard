@@ -1,209 +1,49 @@
-# Notebook 11: Question 02 - Co-Training Parameter Sweep
+# Tài liệu: 11 - Thử nghiệm và cải tiến Co-Training
 
-## Mục tiêu
+## 🎯 Mục tiêu
 
-Khảo sát hiệu quả của Co-Training với các cấu hình tham số khác nhau:
-- **TAU**: Ngưỡng confidence để chọn pseudo-labels cho mỗi view
-- **MAX_NEW_PER_VIEW**: Số lượng pseudo-labels tối đa từ mỗi view
-- **K_BEST**: Số lượng samples tốt nhất cuối cùng chọn sau khi combine 2 views
-- **VIEW1_COLS & VIEW2_COLS**: Chiến lược phân chia features thành 2 views
+Notebook này ghi lại quá trình nỗ lực cải thiện hiệu suất của thuật toán **Co-Training**, vốn cho kết quả ban đầu rất thấp (F1-macro = 0.4044). Các thử nghiệm tập trung vào việc tinh chỉnh các yếu tố cốt lõi của Co-Training:
+-   **`View Strategies`**: Các cách chia bộ đặc trưng thành 2 "góc nhìn".
+-   **`TAU`**: Ngưỡng tự tin.
+-   **`MAX_NEW_PER_ITER`**: Số lượng nhãn giả tối đa được trao đổi mỗi vòng.
 
-## Thiết lập thử nghiệm
+## 🔬 Quá trình thử nghiệm và kết quả
 
-### Tham số cố định
-- `RANDOM_STATE = 42`
-- `SAMPLE_FRAC = 0.1` (10% dữ liệu)
-- `MAX_ITER = 10`
+### 1. Vấn đề ban đầu: Overfitting và hiệu suất thấp
 
-### Chiến lược phân chia views
+Như thể hiện trong Slide 21, Co-Training với cấu hình mặc định cho kết quả **thấp nhất** trong 3 thuật toán (Self-Training, Baseline, Co-Training), và có dấu hiệu overfitting rõ rệt khi F1-score trên tập validation cao nhưng trên tập test lại rất thấp.
 
-#### View 1: Temporal & Weather features
-```python
-VIEW1_COLS = [
-    'hour', 'hour_sin', 'hour_cos', 'dow', 'is_weekend',
-    'TEMP', 'PRES', 'DEWP', 'RAIN', 'wd', 'WSPM',
-    'TEMP_lag1', 'PRES_lag1', 'DEWP_lag1', 'RAIN_lag1', 'WSPM_lag1'
-]
-```
+![Initial Co-Training Performance](../images/Slide21.PNG)
+*Hình 1: Co-Training (màu cam) cho F1-macro thấp nhất trong so sánh ban đầu.*
 
-#### View 2: Pollutants & Lag features
-```python
-VIEW2_COLS = [
-    'PM10', 'SO2', 'NO2', 'CO', 'O3', 'station',
-    'PM10_lag1', 'SO2_lag1', 'NO2_lag1', 'CO_lag1', 'O3_lag1',
-    'PM10_lag3', 'SO2_lag3', 'NO2_lag3', 'CO_lag3', 'O3_lag3',
-    'PM10_lag24', 'SO2_lag24', 'NO2_lag24', 'CO_lag24', 'O3_lag24'
-]
-```
+### 2. Thử nghiệm cải tiến
 
-**Lý do phân chia**:
-- View 1: Các yếu tố thời gian và thời tiết (pattern theo giờ/ngày, điều kiện khí tượng)
-- View 2: Các chất ô nhiễm và giá trị lag (chemical composition và temporal dependencies)
-- Hai views bổ trợ nhau nhưng độc lập về mặt thông tin
+Một loạt các thử nghiệm đã được thực hiện để tìm ra cấu hình tốt hơn, bao gồm 3 chiến lược chia view và nhiều kết hợp tham số `TAU`, `MAX_NEW_PER_ITER`.
 
-### Các thử nghiệm
+**Kết quả: CÓ sự cải thiện!**
 
-#### Experiment grid (18 configurations)
-```python
-TAU_VALUES = [0.6, 0.7, 0.8]
-MAX_NEW_VALUES = [50, 100]
-K_BEST_VALUES = [80, 100, 120]
-```
+Thử nghiệm cho thấy việc tinh chỉnh tham số có mang lại hiệu quả. Cấu hình tốt nhất đã giúp nâng F1-macro từ 0.4044 lên **0.4205**.
 
-## Kết quả chính
+![Co-Training Improvement Heatmap](../images/Slide24.PNG)
+*Hình 2: Heatmap từ thử nghiệm cho thấy hiệu suất được cải thiện. Điểm MAX đạt được là 0.4205 với `view_strategy='default'`, `TAU=0.8`, `MAX_NEW_PER_ITER=500`.*
 
-### Output files
-- `data/processed/11_01_metrics_co_training.json` đến `11_18_metrics_co_training.json`
-- Mỗi file chứa kết quả cho một cấu hình cụ thể
+### 3. Phân tích ảnh hưởng của tham số
 
-### Visualizations
-- `images/11_01_co_training_default.png`: Co-Training dynamics với cấu hình default
-- `images/11_02_co_training_line_chart.png`: So sánh F1-macro theo các cấu hình
+-   **Ảnh hưởng của `MAX_NEW_PER_ITER`**: Phân tích sâu hơn cho thấy, trong 71.42% trường hợp, việc **tăng `MAX_NEW_PER_ITER` từ 250 lên 500 đã giúp cải thiện F1-macro**. Điều này cho thấy việc cho phép các mô hình trao đổi nhiều "kiến thức" hơn trong mỗi vòng lặp là có lợi.
 
-## Insights chính
+    ![Effect of MAX_NEW_PER_ITER](../images/Slide25.PNG)
+    *Hình 3: Đường màu xanh nhạt (MAX_NEW=500) thường cho kết quả cao hơn đường màu xanh đậm (MAX_NEW=250).*
 
-### 1. Ưu điểm của Co-Training
+-   **Ảnh hưởng của `TAU`**: Hiệu suất của Co-Training khá nhạy cảm với `TAU`. Các giá trị `TAU` trong khoảng **0.75 đến 0.85** thường mang lại kết quả tốt nhất, trong khi các giá trị quá thấp hoặc quá cao lại làm giảm hiệu suất.
 
-**So với Self-Training**:
-- ✅ **Diversity**: Hai views cho predictions khác nhau → giảm overfitting
-- ✅ **Mutual improvement**: View 1 giúp View 2 và ngược lại
-- ✅ **Better generalization**: Kết hợp 2 views → robust hơn
-- ✅ **Label efficiency**: Hiệu quả hơn khi labeled data rất ít
+    ![Effect of TAU](../images/Slide26.PNG)
+    *Hình 4: Biểu đồ cho thấy các đỉnh hiệu suất tại TAU = 0.75 và 0.85.*
 
-**F1-macro comparison**:
-- Self-Training (TAU=0.7): ~0.68
-- Co-Training (TAU=0.7, best config): ~0.71
-- **Improvement**: +4.4%
+---
 
-### 2. Ảnh hưởng của TAU
+## 🏆 Kết luận
 
-**Quan sát**:
-- TAU=0.6: Nhiều pseudo-labels từ cả 2 views, nhưng noise cao
-- TAU=0.7: Cân bằng tốt, F1-macro đạt peak
-- TAU=0.8: Quá conservative, tăng trưởng chậm
-
-**Best TAU**: 0.7 (giống Self-Training)
-
-### 3. Ảnh hưởng của MAX_NEW_PER_VIEW
-
-**Quan sát**:
-- MAX_NEW=50: Hội tụ chậm, cần nhiều iterations
-- MAX_NEW=100: Tốc độ tốt, đủ samples mỗi iteration
-- MAX_NEW=150+: Không cải thiện đáng kể (giới hạn bởi K_BEST)
-
-**Trade-off**:
-- Số lượng candidates từ mỗi view
-- Chất lượng sau khi filter bằng K_BEST
-- Computational cost (train 2 models mỗi iteration)
-
-### 4. Ảnh hưởng của K_BEST
-
-**Quan sát**:
-- K_BEST=80: Quá strict, bỏ qua nhiều good samples
-- K_BEST=100: Cân bằng tốt nhất
-- K_BEST=120: Có thể thêm noise khi 2 views không đủ agreement
-
-**Best K_BEST**: 100 (với MAX_NEW_PER_VIEW=100)
-
-**Rule of thumb**: K_BEST ≈ MAX_NEW_PER_VIEW để đảm bảo quality
-
-### 5. View independence analysis
-
-**Correlation giữa 2 views**:
-- View 1 predictions ≠ View 2 predictions → good diversity
-- Agreement rate: ~75% trên high-confidence samples
-- Disagreement cases: view khác giúp correct errors
-
-**Khi nào Co-Training hiệu quả**:
-- ✅ Views thực sự independent (ít feature overlap)
-- ✅ Mỗi view đủ mạnh để train model riêng
-- ✅ Views bổ sung thông tin cho nhau
-- ❌ Views quá overlap → giống Self-Training
-- ❌ Một view quá yếu → kéo performance xuống
-
-### 6. Computational cost
-
-**So với Self-Training**:
-- Self-Training: 1 model/iteration × 10 iterations = 10 trainings
-- Co-Training: 2 models/iteration × 10 iterations = 20 trainings
-- **Cost**: ~2× Self-Training
-
-**Trade-off**:
-- +4.4% F1-macro improvement
-- 2× training time
-- ROI: Tốt khi labeled data rất ít và accuracy quan trọng
-
-## Cấu hình khuyến nghị
-
-### Best configuration
-```python
-TAU = 0.7
-MAX_NEW_PER_VIEW = 100
-K_BEST = 100
-MAX_ITER = 10
-
-VIEW1_COLS = ['hour', 'hour_sin', 'hour_cos', 'dow', 'is_weekend',
-              'TEMP', 'PRES', 'DEWP', 'RAIN', 'wd', 'WSPM',
-              'TEMP_lag1', 'PRES_lag1', 'DEWP_lag1', 'RAIN_lag1', 'WSPM_lag1']
-
-VIEW2_COLS = ['PM10', 'SO2', 'NO2', 'CO', 'O3', 'station',
-              'PM10_lag1', 'SO2_lag1', 'NO2_lag1', 'CO_lag1', 'O3_lag1',
-              'PM10_lag3', 'SO2_lag3', 'NO2_lag3', 'CO_lag3', 'O3_lag3',
-              'PM10_lag24', 'SO2_lag24', 'NO2_lag24', 'CO_lag24', 'O3_lag24']
-```
-
-**Expected performance**:
-- F1-macro: ~0.71
-- Accuracy: ~0.64
-- Training time: ~2× Self-Training
-
-## So sánh với Self-Training
-
-| Metric | Self-Training | Co-Training | Delta |
-|--------|--------------|-------------|-------|
-| F1-macro | 0.680 | 0.710 | +4.4% |
-| Accuracy | 0.614 | 0.639 | +4.1% |
-| Training time | 1× | 2× | +100% |
-| Complexity | Low | Medium | - |
-| Label efficiency | Good | Better | - |
-
-**Khi nào dùng Co-Training**:
-- ✅ Labeled data rất ít (<5%)
-- ✅ Features có thể phân chia thành 2 views independent
-- ✅ Accuracy quan trọng hơn speed
-- ✅ Có đủ computational resources
-
-**Khi nào dùng Self-Training**:
-- ✅ Labeled data trung bình (5-10%)
-- ✅ Cần training nhanh
-- ✅ Features khó phân chia thành views
-- ✅ Resources hạn chế
-
-## Bài học quan trọng
-
-### 1. View design là quan trọng nhất
-- Views phải thực sự independent
-- Mỗi view cần đủ thông tin để train model tốt
-- Domain knowledge giúp thiết kế views hiệu quả
-
-### 2. Agreement filtering
-- K_BEST mechanism giúp filter noise
-- Chỉ chọn samples mà cả 2 views đều confident
-- Trade-off: strict filtering vs coverage
-
-### 3. Monitoring convergence
-- Theo dõi agreement rate giữa 2 views
-- Nếu agreement quá cao (>95%) → views quá overlap
-- Nếu agreement quá thấp (<50%) → views conflict
-
-### 4. Practical considerations
-- 2× training cost cần cân nhắc với improvement
-- Early stopping quan trọng hơn với Co-Training
-- Validation set để monitor cả 2 views
-
-## Liên kết
-
-- **Notebook**: `notebooks/11_Question02.ipynb`
-- **Previous**: [10 - Question 01 (Self-Training Sweep)](10_question01.md)
-- **Next**: [12 - Question 03 (Graph-based SSL)](12_question03.md)
-- **Related**: [05 - Co-Training](05_semi_co_training.md)
+-   Co-Training là một thuật toán phức tạp và nhạy cảm với cấu hình.
+-   Mặc dù kết quả mặc định ban đầu rất thấp, việc **tinh chỉnh tham số và chiến lược chia view có thể mang lại sự cải thiện** về hiệu suất.
+-   Tuy nhiên, ngay cả với cấu hình tốt nhất được tìm thấy, F1-macro của Co-Training (**0.4205**) vẫn **thấp hơn đáng kể** so với Supervised Baseline (0.4715) và Self-Training (0.5343).
+-   **Kết luận cuối cùng**: Đối với bài toán này, Co-Training không phải là một lựa chọn hiệu quả, ngay cả sau khi đã được tối ưu hóa.

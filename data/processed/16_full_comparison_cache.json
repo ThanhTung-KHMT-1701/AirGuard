@@ -1,0 +1,32 @@
+{
+  "Self-Training (Default)": {
+    "model": "Self-Training (Default)",
+    "f1_macro": 0.5343258092284096,
+    "execution_time": NaN
+  },
+  "Co-Training (Default)": {
+    "model": "Co-Training (Default)",
+    "f1_macro": 0.404431750461202,
+    "execution_time": NaN
+  },
+  "Self-Training (Random Forest)": {
+    "model": "Self-Training (Random Forest)",
+    "f1_macro": 0.41525942840347385,
+    "execution_time": 10.785409927368164
+  },
+  "Self-Training (KNN)": {
+    "model": "Self-Training (KNN)",
+    "f1_macro": 0.31420034478040604,
+    "execution_time": 21.696950435638428
+  },
+  "LabelPropagation (KNN Kernel)": {
+    "model": "LabelPropagation (KNN Kernel)",
+    "f1_macro": 0.31264969939918225,
+    "execution_time": 13.570269107818604
+  },
+  "LabelSpreading (KNN Kernel)": {
+    "model": "LabelSpreading (KNN Kernel)",
+    "f1_macro": 0.3497194353170048,
+    "execution_time": 4.431582450866699
+  }
+}

@@ -1,68 +1,61 @@
-# 09 — Semi-supervised Learning Report
+# Tài liệu: 09 - Báo cáo tổng kết về học bán giám sát
 
-## 🎯 Mục tiêu chính
+## 🎯 Mục tiêu
 
-Đây là notebook **cuối cùng và quan trọng nhất** của luồng thí nghiệm. Nó đóng vai trò là một **báo cáo tổng kết**, nơi tất cả các kết quả từ các phương pháp khác nhau được hội tụ, so sánh và trực quan hóa.
+Đây là notebook báo cáo cuối cùng, nơi hội tụ và tổng kết toàn bộ kết quả của các thử nghiệm phân loại AQI. Mục tiêu là:
 
-Mục tiêu chính của notebook này là:
-1.  **Tổng hợp kết quả:** Tải và hợp nhất các file metrics (`.json`) từ các notebook `04` (Self-Training), `05` (Co-Training), và `06` (Supervised Baseline).
-2.  **Trực quan hóa so sánh:** Tạo ra các bảng và biểu đồ rõ ràng để so sánh hiệu suất (chủ yếu là `f1_macro`) giữa các phương pháp.
-3.  **Rút ra kết luận:** Dựa trên các bằng chứng từ dữ liệu, đưa ra kết luận cuối cùng cho câu hỏi nghiên cứu của dự án:
-    > "Liệu các phương pháp học bán giám sát có thực sự cải thiện hiệu suất dự báo chất lượng không khí khi đối mặt với tình trạng thiếu nhãn hay không? Và nếu có, phương pháp nào là tốt nhất?"
-
----
-
-## 📥 Đầu vào (Input)
-
-Notebook này không xử lý dữ liệu thô, mà "tiêu thụ" kết quả của các notebook khác.
-
-| File | Được tạo ra từ | Mô tả |
-| :--- | :--- | :--- |
-| `data/processed/06_metrics_classification.json` | Notebook `06` | **Baseline:** Kết quả của mô hình Supervised. |
-| `data/processed/04_metrics_self_training.json` | Notebook `04` | Kết quả của mô hình Self-Training. |
-| `data/processed/05_metrics_co_training.json` | Notebook `05` | Kết quả của mô hình Co-Training. |
+1.  **Tổng hợp và so sánh**: Tập hợp kết quả từ ba phương pháp đã thử nghiệm (Supervised Baseline, Self-Training, Co-Training) vào một nơi duy nhất.
+2.  **Trực quan hóa**: Tạo ra các biểu đồ so sánh trực quan để làm nổi bật sự khác biệt về hiệu suất.
+3.  **Rút ra kết luận**: Dựa trên bằng chứng dữ liệu, đưa ra câu trả lời cuối cùng cho câu hỏi nghiên cứu cốt lõi của dự án:
+    > "Liệu các phương pháp học bán giám sát có thực sự cải thiện hiệu suất dự báo khi dữ liệu có nhãn khan hiếm hay không? Nếu có, phương pháp nào là tối ưu nhất?"
 
 ---
 
-## 📤 Đầu ra (Output)
+## 🔬 Phân tích so sánh toàn diện
 
-Đầu ra của notebook này không phải là file dữ liệu, mà là các **phân tích và trực quan hóa** được hiển thị trực tiếp trong notebook.
+### 1. So sánh hiệu suất tổng thể
 
-| Loại đầu ra | Mô tả |
-| :--- | :--- |
-| **Bảng so sánh tổng hợp** | Một DataFrame hiển thị các chỉ số chính (`accuracy`, `f1_macro`) của cả ba phương pháp để dễ dàng so sánh. |
-| **Biểu đồ cột so sánh F1-score** | Một biểu đồ cột, trực quan hóa `f1_macro` của từng phương pháp, giúp làm nổi bật phương pháp nào là tốt nhất. |
-| **Biểu đồ so sánh F1-score theo từng lớp** | Biểu đồ chi tiết hơn, so sánh hiệu suất của từng phương pháp trên mỗi lớp AQI (`Good`, `Moderate`...). Điều này giúp tìm ra điểm mạnh, điểm yếu của từng mô hình. |
-| **Kết luận cuối cùng** | Một đoạn văn bản tổng kết lại toàn bộ kết quả và trả lời câu hỏi nghiên cứu. |
+Bảng và biểu đồ dưới đây tóm tắt hiệu suất của cả ba phương pháp trên tập kiểm tra (TEST), sử dụng chỉ số **F1-macro** làm thước đo chính do tính chất mất cân bằng của dữ liệu.
 
----
+| Phương pháp               | F1-macro (Test Set) | Cải thiện so với Baseline |
+| :------------------------ | :------------------ | :------------------------ |
+| **Supervised (Baseline)** | 0.472               | -                         |
+| **Self-Training**         | **0.534**           | **+13.1%**                |
+| **Co-Training**           | 0.404               | -14.4%                    |
 
-## 🔬 Phân tích và kết luận (Dựa trên kết quả thực tế)
+![So sánh hiệu suất các mô hình](../images/09_supervised_vs_semi_supervised.png)
+*Hình 1: Biểu đồ cột so sánh chỉ số F1-macro. Self-Training là phương pháp duy nhất cho thấy sự cải thiện vượt trội so với baseline.*
 
-Notebook này sẽ tự động hóa việc tạo ra các phân tích sau:
+- **Phân tích**:
+    - **Self-Training** đã chứng tỏ hiệu quả vượt trội, cải thiện hiệu suất lên tới **13.1%**. Điều này khẳng định rằng việc tận dụng dữ liệu không nhãn thông qua cơ chế gán nhãn giả đã giúp mô hình học được các ranh giới quyết định tốt hơn, đặc biệt là với các lớp khó.
+    - **Co-Training**, ngược lại, cho hiệu suất thấp hơn cả baseline. Như đã phân tích ở tài liệu trước, nguyên nhân có thể đến từ việc phân chia "views" chưa tối ưu, dẫn đến việc lan truyền các nhãn giả sai lệch.
 
-### 1. Bảng so sánh hiệu suất tổng thể
+### 2. Phân tích động lực học (Dynamics)
 
-| Phương pháp | f1_macro (trên Test Set) | So với Baseline |
-| :--- | :--- | :--- |
-| **Supervised (Baseline)** | 0.472 | - |
-| **Self-Training** | **0.534** | **+13.1%** |
-| **Co-Training** | 0.404 | -14.4% |
+So sánh quá trình học của Self-Training và Co-Training cho thấy sự khác biệt cơ bản trong cách chúng tiếp cận dữ liệu không nhãn.
 
-### 2. Biểu đồ so sánh
-
-Biểu đồ sẽ trực quan hóa bảng trên, cho thấy cột **Self-Training** cao hơn đáng kể so với hai cột còn lại, khẳng định đây là phương pháp chiến thắng.
-
-### 3. Kết luận của dự án
-
-Dựa trên tất cả các bằng chứng, notebook này sẽ giúp bạn rút ra kết luận cuối cùng:
-> Trong khuôn khổ của dự án này, với bộ dữ liệu và cấu hình đã cho, phương pháp **Self-Training đã chứng tỏ được hiệu quả vượt trội**. Nó đã thành công trong việc tận dụng một lượng lớn dữ liệu không nhãn để cải thiện đáng kể hiệu suất so với mô hình Supervised Baseline. Ngược lại, phương pháp Co-Training với cách chia "view" tự động đã không mang lại hiệu quả như kỳ vọng.
+| Self-Training Dynamics                                   | Co-Training Dynamics                                     |
+| :------------------------------------------------------- | :------------------------------------------------------- |
+| ![Self-Training Dynamics](../images/09_self_training_dynamics_report.png) | ![Co-Training Dynamics](../images/09_co_training_dynamics_report.png) |
+| **Bùng nổ và hội tụ**: Self-Training nhanh chóng khai thác một lượng lớn nhãn giả ở các vòng lặp đầu và sau đó nhanh chóng hội tụ. | **Ổn định và thận trọng**: Co-Training học một cách từ tốn và đều đặn do bị giới hạn về số lượng nhãn giả trao đổi mỗi vòng. |
 
 ---
 
-## 🔗 Notebooks liên quan
+## 🏆 Kết luận cuối cùng
 
-Notebook này là điểm đến cuối cùng của luồng phân tích phân loại.
+Dựa trên toàn bộ quá trình thử nghiệm và các bằng chứng đã thu thập, chúng tôi đưa ra kết luận sau:
 
-- **Nguồn dữ liệu từ:** [04_semi_self_training.md](./04_semi_self_training.md), [05_semi_co_training.md](./05_semi_co_training.md), [06_classification_modelling.md](./06_classification_modelling.md)
-- **Các nhánh song song:** [07_regression_modelling.md](./07_regression_modelling.md), [08_arima_forecasting.md](./08_arima_forecasting.md)
+1.  **Học bán giám sát CÓ hiệu quả**: Câu trả lời cho câu hỏi nghiên cứu là CÓ. Khi được áp dụng đúng cách, học bán giám sát có thể cải thiện đáng kể hiệu suất mô hình trong điều kiện dữ liệu có nhãn hạn chế.
+
+2.  **Self-Training là phương pháp chiến thắng**: Trong bối cảnh của bài toán dự báo chất lượng không khí với bộ dữ liệu này, **Self-Training là phương pháp hiệu quả và ổn định nhất.** Sự đơn giản trong cơ chế hoạt động của nó lại tỏ ra mạnh mẽ, giúp mô hình cải thiện khả năng tổng quát hóa mà không đòi hỏi các giả định phức tạp về cấu trúc dữ liệu như Co-Training.
+
+3.  **Khuyến nghị**: Đối với các bài toán tương tự có dữ liệu chuỗi thời gian được gán nhãn một phần, **Self-Training nên được xem là một trong những phương pháp tiếp cận hàng đầu** để tối ưu hóa hiệu suất mô hình.
+
+---
+
+## 🔗 Các tài liệu liên quan
+
+Notebook này là điểm tổng kết cho chuỗi tài liệu về mô hình phân loại:
+- [04_semi_self_training.md](./04_semi_self_training.md)
+- [05_semi_co_training.md](./05_semi_co_training.md)
+- [06_classification_modelling.md](./06_classification_modelling.md)
