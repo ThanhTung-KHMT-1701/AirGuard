@@ -1,0 +1,4 @@
+Model,F1-macro
+Self-Training,0.5343258092284096
+Baseline (Supervised),0.47153196677178205
+Co-Training,0.404431750461202
